@@ -3,43 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - IP Collection</title>
+    <title>Sign In - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#023e8a',
+                        'primary-dark': '#03045e',
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-<main class="container" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h1 style="color: var(--text-light); font-size: 2.5rem; margin-bottom: 0.5rem;">IP Collection System</h1>
-        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Institution IP Address Management</p>
+<body class="bg-gradient-to-br from-primary-dark via-primary to-primary-light min-h-screen font-poppins flex items-center justify-center">
+    <div class="w-full max-w-md px-4">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white">NSU IT</h1>
+            <p class="text-blue-200 mt-2 text-lg">IP Address Management System</p>
+        </div>
+
+        <div class="card">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Sign In</h2>
+
+            <p th:if="${param.error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                Invalid username or password.
+            </p>
+            <p th:if="${param.logout}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                You have been signed out.
+            </p>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+                    <input id="username" name="username" type="text" required autofocus 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                    <input id="password" name="password" type="password" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-lg transition">
+                    Login
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-6 text-center text-blue-200 text-sm">
+            <p>Default credentials:</p>
+            <p class="mt-1">
+                <strong>superadmin / super123</strong> (Full Access)<br>
+                <strong>editor / editor123</strong> (Add/Edit)<br>
+                <strong>viewer / viewer123</strong> (View Only)
+            </p>
+        </div>
     </div>
-
-    <div class="form-card" style="max-width: 400px; width: 100%;">
-        <h2 style="text-align: center; margin-bottom: 1.5rem;">Sign In</h2>
-
-        <p th:if="${param.error}" class="alert alert-error">Invalid username or password.</p>
-        <p th:if="${param.logout}" class="alert alert-success">You have been signed out.</p>
-
-        <form th:action="@{/login}" method="post">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input id="username" name="username" type="text" required autofocus>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" name="password" type="password" required>
-            </div>
-
-            <button type="submit" style="width: 100%; margin-top: 0.5rem;">Login</button>
-        </form>
-    </div>
-
-    <p class="hint" style="text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.7);">
-        Default credentials:<br>
-        <strong>superadmin / super123</strong> (Full Access)<br>
-        <strong>editor / editor123</strong> (Add/Edit Records)<br>
-        <strong>viewer / viewer123</strong> (View Only)
-    </p>
-</main>
 </body>
 </html>

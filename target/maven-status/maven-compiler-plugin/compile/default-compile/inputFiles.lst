@@ -5,11 +5,15 @@
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/RecordController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/UserController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/AppUser.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/IpHistory.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/Record.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/RecordStatus.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/Role.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/IpHistoryRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/RecordRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/UserRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/security/CustomUserDetailsService.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/security/SecurityConfig.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/service/PdfService.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/service/RecordService.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/service/UserService.java

@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
     --primary: #023e8a;
     --primary-dark: #03045e;
@@ -28,372 +32,76 @@ body {
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 1rem;
-}
+@layer components {
+    .btn {
+        @apply px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer;
+    }
 
-.container.small {
-    max-width: 480px;
-}
+    .btn-primary {
+        @apply bg-blue-700 hover:bg-blue-800 text-white;
+    }
 
-.toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-700 text-white;
+    }
 
-.toolbar h1 {
-    color: var(--text-light);
-    margin: 0;
-    font-weight: 600;
-    font-size: 1.75rem;
-}
+    .btn-success {
+        @apply bg-green-600 hover:bg-green-700 text-white;
+    }
 
-.toolbar nav {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
+    .btn-warning {
+        @apply bg-amber-500 hover:bg-amber-600 text-white;
+    }
 
-a {
-    color: var(--text-light);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.15);
-    transition: all 0.2s ease;
-}
+    .btn-secondary {
+        @apply bg-gray-500 hover:bg-gray-600 text-white;
+    }
 
-a:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
+    .card {
+        @apply bg-white rounded-xl shadow-lg p-5;
+    }
 
-.list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.25rem;
-}
+    .form-input {
+        @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+    }
 
-.card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+    .badge {
+        @apply inline-block px-3 py-1 rounded-full text-xs font-semibold;
+    }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
+    .badge-active {
+        @apply bg-green-100 text-green-800;
+    }
 
-.card h3 {
-    margin: 0 0 0.75rem;
-    color: var(--primary-dark);
-    font-weight: 600;
-    font-size: 1.1rem;
-}
+    .badge-free {
+        @apply bg-amber-100 text-amber-800;
+    }
 
-.card p {
-    margin: 0.35rem 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-}
+    .table-container {
+        @apply overflow-x-auto bg-white rounded-xl shadow-lg;
+    }
 
-.card .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid var(--border);
-}
+    .custom-table {
+        @apply w-full;
+    }
 
-.card .info-row:last-of-type {
-    border-bottom: none;
-}
+    .custom-table th {
+        @apply px-4 py-3 text-left bg-blue-700 text-white font-medium;
+    }
 
-.card .info-label {
-    font-weight: 500;
-    color: var(--text-dark);
-}
+    .custom-table th:first-child {
+        @apply rounded-tl-xl;
+    }
 
-.card .info-value {
-    color: var(--ink);
-}
+    .custom-table th:last-child {
+        @apply rounded-tr-xl;
+    }
 
-.form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
+    .custom-table td {
+        @apply px-4 py-3 border-b border-gray-200;
+    }
 
-.form-card h2 {
-    margin: 0 0 1.25rem;
-    color: var(--primary-dark);
-    font-weight: 600;
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 0.35rem;
-    color: var(--text-dark);
-}
-
-input,
-textarea,
-select {
-    font-family: inherit;
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.65rem 0.85rem;
-    background: #fff;
-    font-size: 0.95rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.1);
-}
-
-input.error,
-textarea.error {
-    border-color: var(--danger);
-}
-
-button {
-    font-family: inherit;
-    border: none;
-    border-radius: 8px;
-    background: var(--primary);
-    color: var(--text-light);
-    padding: 0.65rem 1.25rem;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: background 0.2s ease;
-}
-
-button:hover {
-    background: var(--primary-dark);
-}
-
-button.danger {
-    background: var(--danger);
-}
-
-button.danger:hover {
-    background: #b91c1c;
-}
-
-button.secondary {
-    background: var(--muted);
-}
-
-button.secondary:hover {
-    background: var(--ink);
-}
-
-.inline-form {
-    display: inline-flex;
-    margin: 0;
-}
-
-.actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-}
-
-.meta {
-    color: var(--muted);
-    font-size: 0.85rem;
-}
-
-.error {
-    color: var(--danger);
-    margin: 0 0 1rem;
-    padding: 0.75rem;
-    background: #fef2f2;
-    border-radius: 8px;
-    border: 1px solid #fecaca;
-}
-
-.success {
-    color: var(--success);
-    margin: 0 0 1rem;
-    padding: 0.75rem;
-    background: #f0fdf4;
-    border-radius: 8px;
-    border: 1px solid #:bbf7d0;
-}
-
-.hint {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 1rem;
-}
-
-.table-container {
-    overflow-x: auto;
-    background: var(--surface);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 0.85rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-}
-
-th {
-    background: var(--primary);
-    color: var(--text-light);
-    font-weight: 500;
-}
-
-th:first-child {
-    border-top-left-radius: 12px;
-}
-
-th:last-child {
-    border-top-right-radius: 12px;
-}
-
-tr:hover {
-    background: #f9fafb;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-.alert {
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.alert-error {
-    background: #fef2f2;
-    color: var(--danger);
-    border: 1px solid #fecaca;
-}
-
-.alert-success {
-    background: #f0fdf4;
-    color: var(--success);
-    border: 1px solid #bbf7d0;
-}
-
-.filter-bar {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-    align-items: flex-end;
-}
-
-.filter-bar .form-group {
-    margin-bottom: 0;
-    min-width: 200px;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: var(--muted);
-}
-
-.empty-state h3 {
-    color: var(--text-light);
-    margin-bottom: 0.5rem;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.badge-admin {
-    background: var(--primary);
-    color: var(--text-light);
-}
-
-.badge-editor {
-    background: var(--accent);
-    color: var(--text-dark);
-}
-
-.badge-viewer {
-    background: var(--success);
-    color: var(--text-light);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: var(--text-light);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-}
-
-.pagination a,
-.pagination span {
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.pagination .current {
-    background: var(--text-light);
-    color: var(--primary-dark);
+    .custom-table tr:hover {
+        @apply bg-gray-50;
+    }
 }

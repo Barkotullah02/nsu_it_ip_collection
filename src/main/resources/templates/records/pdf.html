@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Records - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @media print {
+            body { background: white; }
+            .no-print { display: none; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+            .table-container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body class="bg-white font-poppins">
+    <div class="p-8">
+        <div class="text-center mb-6 no-print">
+            <button onclick="window.print()" class="px-6 py-2 bg-blue-700 text-white rounded-lg">Print / Save as PDF</button>
+            <a href="/records" class="px-6 py-2 ml-4 bg-gray-500 text-white rounded-lg">Back</a>
+        </div>
+
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">NSU IT - IP Address Management</h1>
+            <p class="text-lg text-gray-600" th:text="${filterInfo}">All Records</p>
+            <p class="text-sm text-gray-500">Generated: <span th:text="${generatedAt}"></span></p>
+        </div>
+
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th class="bg-blue-700 text-white">SL</th>
+                        <th class="bg-blue-700 text-white">IP Address</th>
+                        <th class="bg-blue-700 text-white">Name</th>
+                        <th class="bg-blue-700 text-white">Designation</th>
+                        <th class="bg-blue-700 text-white">Dept</th>
+                        <th class="bg-blue-700 text-white">Ext</th>
+                        <th class="bg-blue-700 text-white">Room</th>
+                        <th class="bg-blue-700 text-white">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="record : ${records}">
+                        <td th:text="${record.sl}">1</td>
+                        <td class="font-mono text-blue-600" th:text="${record.ipAddress}">192.168.1.1</td>
+                        <td th:text="${record.name}">-</td>
+                        <td th:text="${record.designation}">-</td>
+                        <td th:text="${record.department}">-</td>
+                        <td th:text="${record.extNumber}">-</td>
+                        <td th:text="${record.room}">-</td>
+                        <td>
+                            <span th:if="${record.status == 'ACTIVE'}" class="badge badge-active">Active</span>
+                            <span th:if="${record.status == 'FREE'}" class="badge badge-free">Free</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 text-right text-gray-500">
+            Total: <span th:text="${#lists.size(records)}">0</span> records
+        </div>
+    </div>
+</body>
+</html>

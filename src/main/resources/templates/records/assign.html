@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras-spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${formTitle}">IP Record Form</title>
+    <title>Assign IP - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,65 +30,70 @@
 <body class="bg-gradient-to-br from-primary-dark via-primary to-primary-light min-h-screen font-poppins">
     <div class="container mx-auto px-4 py-8">
         <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-white" th:text="${formTitle}">IP Record Form</h1>
+            <h1 class="text-3xl font-bold text-white">Assign IP to New User</h1>
             <a th:href="@{/records}" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition">Back to List</a>
         </header>
 
+        <div class="card max-w-2xl mx-auto mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Current IP Info</h3>
+            <div class="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="text-gray-500 text-sm">IP Address</p>
+                    <p class="font-mono text-blue-600 text-lg" th:text="${record.ipAddress}">192.168.1.1</p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Status</p>
+                    <span class="badge badge-free">Free</span>
+                </div>
+            </div>
+        </div>
+
         <form th:action="@{${formAction}}" th:object="${record}" method="post" class="card max-w-2xl mx-auto">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">New User Information</h3>
 
             <div class="grid md:grid-cols-2 gap-4">
                 <div class="form-group">
                     <label for="sl" class="block text-gray-700 font-medium mb-1">SL Number</label>
                     <input id="sl" type="number" th:field="*{sl}" min="1" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('sl')}" th:errors="*{sl}"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="ipAddress" class="block text-gray-700 font-medium mb-1">IP Address</label>
-                    <input id="ipAddress" type="text" th:field="*{ipAddress}" placeholder="192.168.1.1" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('ipAddress')}" th:errors="*{ipAddress}"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="name" class="block text-gray-700 font-medium mb-1">Name of User</label>
-                    <input id="name" type="text" th:field="*{name}" maxlength="100" class="form-input">
+                    <input id="name" type="text" th:field="*{name}" maxlength="100" class="form-input" required>
                     <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="designation" class="block text-gray-700 font-medium mb-1">Designation</label>
-                    <input id="designation" type="text" th:field="*{designation}" maxlength="100" class="form-input">
+                    <input id="designation" type="text" th:field="*{designation}" maxlength="100" class="form-input" required>
                     <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('designation')}" th:errors="*{designation}"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="extNumber" class="block text-gray-700 font-medium mb-1">Extension Number</label>
                     <input id="extNumber" type="text" th:field="*{extNumber}" maxlength="20" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('extNumber')}" th:errors="*{extNumber}"></p>
                 </div>
 
                 <div class="form-group">
                     <label for="room" class="block text-gray-700 font-medium mb-1">Room</label>
-                    <input id="room" type="text" th:field="*{room}" maxlength="50" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('room')}" th:errors="*{room}"></p>
+                    <input id="room" type="text" th:field="*{room}" maxlength="50" class="form-input" required>
                 </div>
 
                 <div class="form-group md:col-span-2">
                     <label for="department" class="block text-gray-700 font-medium mb-1">Department</label>
-                    <input id="department" type="text" th:field="*{department}" placeholder="Department of ECE" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></p>
+                    <input id="department" type="text" th:field="*{department}" placeholder="Department of ECE" class="form-input" required>
                 </div>
 
                 <div class="form-group md:col-span-2">
                     <label for="macAddress" class="block text-gray-700 font-medium mb-1">MAC Address</label>
                     <input id="macAddress" type="text" th:field="*{macAddress}" placeholder="00:1A:2B:3C:4D:5E" class="form-input">
-                    <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('macAddress')}" th:errors="*{macAddress}"></p>
                 </div>
             </div>
 
             <div class="flex gap-3 mt-6">
-                <button type="submit" class="btn btn-primary flex-1">Save</button>
+                <button type="submit" class="btn btn-primary flex-1">Assign IP</button>
                 <a th:href="@{/records}" class="btn btn-secondary text-center">Cancel</a>
             </div>
         </form>

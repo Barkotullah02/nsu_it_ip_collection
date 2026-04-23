@@ -2,28 +2,24 @@ package com.example.recordsapp.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ip_records")
-public class Record {
+@Table(name = "ip_history")
+public class IpHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sl_number")
-    private Integer sl;
+    @Column(name = "ip_address", length = 45, nullable = false)
+    private String ipAddress;
 
     @Column(length = 100)
     private String name;
@@ -34,11 +30,6 @@ public class Record {
     @Column(name = "ext_number", length = 20)
     private String extNumber;
 
-    @Pattern(regexp = "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$", message = "Invalid IP Address")
-    @Column(name = "ip_address", length = 45)
-    private String ipAddress;
-
-    @Pattern(regexp = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", message = "Invalid MAC Address")
     @Column(name = "mac_address", length = 17)
     private String macAddress;
 
@@ -48,29 +39,22 @@ public class Record {
     @Column(length = 100)
     private String department;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RecordStatus status = RecordStatus.ACTIVE;
-
-    @Column(name = "assigned_at")
+    @Column(name = "assigned_at", nullable = false)
     private LocalDateTime assignedAt;
 
     @Column(name = "released_at")
     private LocalDateTime releasedAt;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
 
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = RecordStatus.ACTIVE;
-        }
-        if (this.assignedAt == null && this.status == RecordStatus.ACTIVE) {
+        if (this.assignedAt == null) {
             this.assignedAt = LocalDateTime.now();
         }
     }
@@ -83,12 +67,12 @@ public class Record {
         this.id = id;
     }
 
-    public Integer getSl() {
-        return sl;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setSl(Integer sl) {
-        this.sl = sl;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public String getName() {
@@ -115,14 +99,6 @@ public class Record {
         this.extNumber = extNumber;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
     public String getMacAddress() {
         return macAddress;
     }
@@ -147,14 +123,6 @@ public class Record {
         this.department = department;
     }
 
-    public RecordStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(RecordStatus status) {
-        this.status = status;
-    }
-
     public LocalDateTime getAssignedAt() {
         return assignedAt;
     }
@@ -171,27 +139,19 @@ public class Record {
         this.releasedAt = releasedAt;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public boolean isActive() {
-        return status == RecordStatus.ACTIVE;
-    }
-
-    public boolean isFree() {
-        return status == RecordStatus.FREE;
     }
 }
