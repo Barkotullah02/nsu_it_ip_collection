@@ -5,118 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Record Details - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#023e8a',
-                        'primary-dark': '#03045e',
-                        'primary-light': '#0077b6',
-                        accent: '#00b4d8',
+                        cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' }
                     },
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    }
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
                 }
             }
         }
     </script>
+    <style>
+        :root { --neon-cyan: #00f5ff; }
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+        .neon-glow { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-primary-dark via-primary to-primary-light min-h-screen font-poppins">
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
     <div class="container mx-auto px-4 py-8">
         <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-white">IP Record Details</h1>
-            <a th:href="@{/records}" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition">Back to List</a>
+            <h1 class="text-3xl font-orbitron font-bold text-cyber-neon neon-glow">IP DETAILS</h1>
+            <a th:href="@{/records}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition">← BACK</a>
         </header>
 
         <div class="grid md:grid-cols-2 gap-6">
-            <div class="card">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Current Information</h3>
-                
+            <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6">
+                <h3 class="text-lg font-orbitron font-bold text-cyber-neon mb-4 border-b border-cyber-neon/30 pb-2">CURRENT INFO</h3>
                 <div class="space-y-3">
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">IP Address</span>
-                        <span class="font-mono text-blue-600 font-medium" th:text="${record.ipAddress}">192.168.1.1</span>
+                        <span class="font-mono text-cyber-neon font-bold" th:text="${record.ipAddress}">192.168.1.1</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Status</span>
-                        <span th:if="${record.status == 'ACTIVE'}" class="badge badge-active">Active</span>
-                        <span th:if="${record.status == 'FREE'}" class="badge badge-free">Free</span>
+                        <span th:if="${record.status == 'ACTIVE'}" class="px-3 py-1 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green rounded-full text-xs font-bold">● ACTIVE</span>
+                        <span th:if="${record.status == 'FREE'}" class="px-3 py-1 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink rounded-full text-xs font-bold">○ FREE</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Name</span>
-                        <span th:text="${record.name}">-</span>
+                        <span class="text-white" th:text="${record.name}">-</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Designation</span>
-                        <span th:text="${record.designation}">-</span>
+                        <span class="text-gray-300" th:text="${record.designation}">-</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Extension</span>
-                        <span th:text="${record.extNumber}">-</span>
+                        <span class="text-gray-300" th:text="${record.extNumber}">-</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Department</span>
-                        <span th:text="${record.department}">-</span>
+                        <span class="text-cyber-blue" th:text="${record.department}">-</span>
                     </div>
-                    <div class="flex justify-between py-2 border-b">
+                    <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Room</span>
-                        <span th:text="${record.room}">-</span>
-                    </div>
-                    <div class="flex justify-between py-2 border-b">
-                        <span class="text-gray-500">MAC Address</span>
-                        <span class="font-mono text-xs" th:text="${record.macAddress}">-</span>
+                        <span class="text-gray-300" th:text="${record.room}">-</span>
                     </div>
                     <div class="flex justify-between py-2">
-                        <span class="text-gray-500">Assigned Date</span>
-                        <span th:text="${#temporals.format(record.assignedAt, 'yyyy-MM-dd HH:mm')}">-</span>
+                        <span class="text-gray-500">MAC Address</span>
+                        <span class="font-mono text-xs text-gray-400" th:text="${record.macAddress}">-</span>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap gap-3 mt-6">
-                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'FREE'}" 
-                       th:href="@{/records/{id}/assign(id=${record.id})}" class="btn btn-success flex-1 text-center">Assign to New User</a>
-                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'ACTIVE'}" 
-                       th:href="@{/records/{id}/free(id=${record.id})}" class="btn btn-warning flex-1 text-center">Mark as Free</a>
-                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/{id}/edit(id=${record.id})}" class="btn btn-secondary flex-1 text-center">Edit</a>
-                    <a th:href="@{/records/{id}/history(id=${record.id})}" class="btn btn-primary flex-1 text-center">View History</a>
+                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'FREE'}" th:href="@{/records/{id}/assign(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-bold transition">ASSIGN →</a>
+                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'ACTIVE'}" th:href="@{/records/{id}/free(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink hover:bg-cyber-pink/30 rounded-lg font-bold transition">FREE ↑</a>
+                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/{id}/edit(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-purple/30 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-bold transition">EDIT ✎</a>
+                    <a th:href="@{/records/{id}/history(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-bold transition">HISTORY 📋</a>
                     <form sec:authorize="hasRole('SUPER_ADMIN')" th:action="@{/records/{id}/delete(id=${record.id})}" method="post" class="flex-1">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button type="submit" class="btn btn-danger w-full">Delete</button>
+                        <button type="submit" class="w-full py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-bold transition">DELETE 🗑</button>
                     </form>
                 </div>
             </div>
 
-            <div class="card">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Assignment History</h3>
-                
+            <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6">
+                <h3 class="text-lg font-orbitron font-bold text-cyber-neon mb-4 border-b border-cyber-neon/30 pb-2">ASSIGNMENT HISTORY</h3>
                 <div th:if="${#lists.isEmpty(histories)}" class="text-center py-8 text-gray-500">
                     No history records found for this IP.
                 </div>
-                
                 <div th:unless="${#lists.isEmpty(histories)}" class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-3 py-2 text-left">Name</th>
-                                <th class="px-3 py-2 text-left">Department</th>
-                                <th class="px-3 py-2 text-left">Designation</th>
-                                <th class="px-3 py-2 text-left">From</th>
-                                <th class="px-3 py-2 text-left">To</th>
+                            <tr class="bg-cyber-purple/50">
+                                <th class="px-3 py-2 text-left text-cyber-neon font-orbitron text-xs">NAME</th>
+                                <th class="px-3 py-2 text-left text-cyber-neon font-orbitron text-xs">DEPT</th>
+                                <th class="px-3 py-2 text-left text-cyber-neon font-orbitron text-xs">FROM</th>
+                                <th class="px-3 py-2 text-left text-cyber-neon font-orbitron text-xs">TO</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="history : ${histories}" class="border-b">
-                                <td class="px-3 py-2" th:text="${history.name}">-</td>
-                                <td class="px-3 py-2" th:text="${history.department}">-</td>
-                                <td class="px-3 py-2" th:text="${history.designation}">-</td>
-                                <td class="px-3 py-2" th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
-                                <td class="px-3 py-2" th:text="${history.releasedAt != null ? #temporals.format(history.releasedAt, 'yyyy-MM-dd') : 'Current'}">-</td>
+                            <tr th:each="history : ${histories}" class="border-b border-cyber-neon/10">
+                                <td class="px-3 py-2 text-white" th:text="${history.name}">-</td>
+                                <td class="px-3 py-2 text-cyber-blue" th:text="${history.department}">-</td>
+                                <td class="px-3 py-2 text-gray-400" th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
+                                <td class="px-3 py-2 text-gray-400" th:text="${history.releasedAt != null ? #temporals.format(history.releasedAt, 'yyyy-MM-dd') : 'Current'}">-</td>
                             </tr>
                         </tbody>
                     </table>

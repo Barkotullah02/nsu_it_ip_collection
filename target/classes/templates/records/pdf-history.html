@@ -5,60 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP History - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
     <style>
         @media print {
-            body { background: white; }
-            .no-print { display: none; }
-            .card { box-shadow: none; border: 1px solid #ddd; }
-            .table-container { box-shadow: none; }
+            body { background: white !important; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
-<body class="bg-white font-poppins">
+<body class="bg-white font-rajdhani">
     <div class="p-8">
         <div class="text-center mb-6 no-print">
-            <button onclick="window.print()" class="px-6 py-2 bg-blue-700 text-white rounded-lg">Print / Save as PDF</button>
-            <a href="/records" class="px-6 py-2 ml-4 bg-gray-500 text-white rounded-lg">Back</a>
+            <button onclick="window.print()" class="px-6 py-2 bg-cyber-neon text-cyber-dark font-bold rounded-lg">🖨 PRINT / SAVE PDF</button>
+            <a href="/records" class="px-6 py-2 ml-4 bg-gray-500 text-white rounded-lg">BACK</a>
         </div>
 
         <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">NSU IT - IP History</h1>
-            <p class="text-lg text-blue-600 font-mono" th:text="${ipAddress}">192.168.1.1</p>
+            <h1 class="text-2xl font-orbitron font-bold text-gray-800">NSU IT - IP HISTORY</h1>
+            <p class="text-lg text-blue-600 font-mono font-bold" th:text="${ipAddress}">192.168.1.1</p>
             <p class="text-sm text-gray-500">Generated: <span th:text="${generatedAt}"></span></p>
         </div>
 
-        <div class="table-container">
-            <table class="custom-table">
+        <div class="border border-gray-300 rounded-xl overflow-hidden">
+            <table class="w-full">
                 <thead>
-                    <tr>
-                        <th class="bg-blue-700 text-white">Name</th>
-                        <th class="bg-blue-700 text-white">Designation</th>
-                        <th class="bg-blue-700 text-white">Department</th>
-                        <th class="bg-blue-700 text-white">Ext</th>
-                        <th class="bg-blue-700 text-white">Room</th>
-                        <th class="bg-blue-700 text-white">Assigned</th>
-                        <th class="bg-blue-700 text-white">Released</th>
+                    <tr class="bg-gray-800">
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">NAME</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">DESIGNATION</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">DEPARTMENT</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">EXT</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">ROOM</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">ASSIGNED</th>
+                        <th class="px-3 py-3 text-left text-white font-orbitron text-xs">RELEASED</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="history : ${histories}">
-                        <td th:text="${history.name}">-</td>
-                        <td th:text="${history.designation}">-</td>
-                        <td th:text="${history.department}">-</td>
-                        <td th:text="${history.extNumber}">-</td>
-                        <td th:text="${history.room}">-</td>
-                        <td th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
-                        <td>
-                            <span th:if="${history.releasedAt != null}" th:text="${#temporals.format(history.releasedAt, 'yyyy-MM-dd')}">-</span>
-                            <span th:if="${history.releasedAt == null}" class="text-green-600 font-medium">Current</span>
+                        <td class="px-3 py-3 text-gray-800" th:text="${history.name}">-</td>
+                        <td class="px-3 py-3 text-gray-600" th:text="${history.designation}">-</td>
+                        <td class="px-3 py-3 text-blue-600" th:text="${history.department}">-</td>
+                        <td class="px-3 py-3 text-gray-600" th:text="${history.extNumber}">-</td>
+                        <td class="px-3 py-3 text-gray-600" th:text="${history.room}">-</td>
+                        <td class="px-3 py-3 text-gray-600" th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
+                        <td class="px-3 py-3">
+                            <span th:if="${history.releasedAt != null}" th:text="${#temporals.format(history.releasedAt, 'yyyy-MM-dd')}" class="text-gray-600">-</span>
+                            <span th:if="${history.releasedAt == null}" class="text-green-600 font-bold">Current</span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-4 text-right text-gray-500">
+        <div class="mt-4 text-right text-gray-600 font-orbitron">
             Total: <span th:text="${#lists.size(histories)}">0</span> history entries
         </div>
     </div>

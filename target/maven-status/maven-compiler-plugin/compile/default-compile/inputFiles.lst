@@ -2,13 +2,16 @@
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/config/DataInitializer.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/AdminController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/AuthController.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/IpAddressController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/RecordController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/controller/UserController.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/AppUser.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/IpAddress.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/IpHistory.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/Record.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/RecordStatus.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/model/Role.java
+/Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/IpAddressRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/IpHistoryRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/RecordRepository.java
 /Users/barkotullah/Documents/it/ip_collection/src/main/java/com/example/recordsapp/repository/UserRepository.java

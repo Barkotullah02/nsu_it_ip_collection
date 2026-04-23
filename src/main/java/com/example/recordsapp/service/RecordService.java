@@ -1,8 +1,9 @@
 package com.example.recordsapp.service;
 
+import com.example.recordsapp.model.IpAddress;
 import com.example.recordsapp.model.IpHistory;
 import com.example.recordsapp.model.Record;
-import com.example.recordsapp.model.RecordStatus;
+import com.example.recordsapp.repository.IpAddressRepository;
 import com.example.recordsapp.repository.IpHistoryRepository;
 import com.example.recordsapp.repository.RecordRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class RecordService {
 
     private final RecordRepository recordRepository;
+    private final IpAddressRepository ipAddressRepository;
     private final IpHistoryRepository ipHistoryRepository;
 
-    public RecordService(RecordRepository recordRepository, IpHistoryRepository ipHistoryRepository) {
+    public RecordService(RecordRepository recordRepository, IpAddressRepository ipAddressRepository, IpHistoryRepository ipHistoryRepository) {
         this.recordRepository = recordRepository;
+        this.ipAddressRepository = ipAddressRepository;
         this.ipHistoryRepository = ipHistoryRepository;
     }
 
@@ -35,38 +38,63 @@ public class RecordService {
         return recordRepository.findByDepartmentContainingIgnoreCase(department);
     }
 
-    public List<Record> findByNameContainingOrDepartmentContaining(String name, String department) {
-        return recordRepository.findByNameContainingIgnoreCaseOrDepartmentContainingIgnoreCase(name, department);
-    }
-
-    public List<Record> findByStatus(RecordStatus status) {
-        return recordRepository.findByStatus(status);
-    }
-
     public List<String> getAllDepartments() {
         return recordRepository.findAllDepartments();
-    }
-
-    public List<String> getAllDepartmentsByStatus(RecordStatus status) {
-        return recordRepository.findAllDepartmentsByStatus(status);
     }
 
     public Optional<Record> findById(Long id) {
         return recordRepository.findById(id);
     }
 
+    public Optional<IpAddress> findIpAddressById(Long id) {
+        return ipAddressRepository.findById(id);
+    }
+
+    public List<IpAddress> findAllIpAddresses() {
+        return ipAddressRepository.findAll();
+    }
+
+    public List<IpAddress> findFreeIpAddresses() {
+        return ipAddressRepository.findByIsAssigned(false);
+    }
+
+    public List<IpAddress> findAssignedIpAddresses() {
+        return ipAddressRepository.findByIsAssigned(true);
+    }
+
     @Transactional
-    public Record save(Record record) {
+    public Record save(Record record, String ipAddressStr) {
+        IpAddress ipAddress = ipAddressRepository.findByIpAddress(ipAddressStr)
+                .orElseGet(() -> {
+                    IpAddress newIp = new IpAddress();
+                    newIp.setIpAddress(ipAddressStr);
+                    newIp.setIsAssigned(true);
+                    return ipAddressRepository.save(newIp);
+                });
+
+        if (ipAddress.getIsAssigned()) {
+            throw new IllegalStateException("IP address is already assigned");
+        }
+
+        ipAddress.setIsAssigned(true);
+        ipAddressRepository.save(ipAddress);
+
+        record.setIpAddress(ipAddress);
+        record.setAssignedAt(LocalDateTime.now());
+
         if (record.getId() != null) {
             record.setUpdatedAt(LocalDateTime.now());
         }
-        if (record.getStatus() == null) {
-            record.setStatus(RecordStatus.ACTIVE);
-        }
-        if (record.getAssignedAt() == null && record.getStatus() == RecordStatus.ACTIVE) {
-            record.setAssignedAt(LocalDateTime.now());
-        }
+
         return recordRepository.save(record);
+    }
+
+    @Transactional
+    public IpAddress saveIpAddress(IpAddress ipAddress) {
+        if (ipAddress.getId() != null) {
+            ipAddress.setUpdatedAt(LocalDateTime.now());
+        }
+        return ipAddressRepository.save(ipAddress);
     }
 
     @Transactional
@@ -75,13 +103,23 @@ public class RecordService {
     }
 
     @Transactional
+    public void deleteIpAddressById(Long id) {
+        ipAddressRepository.deleteById(id);
+    }
+
+    @Transactional
     public Record markAsFree(Long id) {
         Optional<Record> recordOpt = recordRepository.findById(id);
         if (recordOpt.isPresent()) {
             Record record = recordOpt.get();
+            IpAddress ipAddress = record.getIpAddressEntity();
+
+            if (ipAddress == null) {
+                return null;
+            }
 
             IpHistory history = new IpHistory();
-            history.setIpAddress(record.getIpAddress());
+            history.setIpAddress(ipAddress.getIpAddress());
             history.setName(record.getName());
             history.setDesignation(record.getDesignation());
             history.setExtNumber(record.getExtNumber());
@@ -99,9 +137,12 @@ public class RecordService {
             record.setMacAddress(null);
             record.setRoom(null);
             record.setDepartment(null);
-            record.setStatus(RecordStatus.FREE);
             record.setReleasedAt(LocalDateTime.now());
             record.setUpdatedAt(LocalDateTime.now());
+            record.setSl(null);
+
+            ipAddress.setIsAssigned(false);
+            ipAddressRepository.save(ipAddress);
 
             return recordRepository.save(record);
         }
@@ -113,19 +154,22 @@ public class RecordService {
         Optional<Record> recordOpt = recordRepository.findById(id);
         if (recordOpt.isPresent()) {
             Record existing = recordOpt.get();
+            IpAddress ipAddress = existing.getIpAddressEntity();
 
-            if (existing.getStatus() == RecordStatus.FREE) {
+            if (ipAddress == null || !ipAddress.getIsAssigned()) {
                 existing.setName(newRecord.getName());
                 existing.setDesignation(newRecord.getDesignation());
                 existing.setExtNumber(newRecord.getExtNumber());
                 existing.setMacAddress(newRecord.getMacAddress());
                 existing.setRoom(newRecord.getRoom());
                 existing.setDepartment(newRecord.getDepartment());
-                existing.setStatus(RecordStatus.ACTIVE);
                 existing.setAssignedAt(LocalDateTime.now());
                 existing.setReleasedAt(null);
                 existing.setUpdatedAt(LocalDateTime.now());
                 existing.setSl(newRecord.getSl());
+
+                ipAddress.setIsAssigned(true);
+                ipAddressRepository.save(ipAddress);
 
                 return recordRepository.save(existing);
             }

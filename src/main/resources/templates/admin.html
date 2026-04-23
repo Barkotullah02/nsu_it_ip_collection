@@ -5,83 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#023e8a',
-                        'primary-dark': '#03045e',
-                        'primary-light': '#0077b6',
-                        accent: '#00b4d8',
-                    },
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    }
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
                 }
             }
         }
     </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-primary-dark via-primary to-primary-light min-h-screen font-poppins">
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
     <div class="container mx-auto px-4 py-8">
         <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-            <div class="text-center md:text-left">
-                <h1 class="text-3xl md:text-4xl font-bold text-white">User Management</h1>
-                <p class="text-blue-200 mt-1">NSU IT Department</p>
+            <div>
+                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">USER MANAGEMENT</h1>
+                <p class="text-cyber-blue mt-1">NSU IT DEPARTMENT</p>
             </div>
-            <nav class="flex flex-wrap justify-center gap-3">
-                <a th:href="@{/records}" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition">IP Records</a>
-                <a th:href="@{/users/new}" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">+ Add User</a>
+            <nav class="flex flex-wrap gap-3">
+                <a th:href="@{/records}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">IP RECORDS</a>
+                <a th:href="@{/users/new}" class="px-4 py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">+ ADD USER</a>
                 <form th:action="@{/logout}" method="post" class="inline">
-                    <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">Logout</button>
+                    <button type="submit" class="px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold">LOGOUT</button>
                 </form>
             </nav>
         </header>
 
-        <div th:if="${#lists.isEmpty(users)}" class="bg-white/10 backdrop-blur rounded-xl p-12 text-center">
-            <h3 class="text-2xl text-white mb-2">No Users Found</h3>
+        <div th:if="${#lists.isEmpty(users)}" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-12 text-center">
+            <h3 class="text-2xl text-gray-400 font-orbitron">NO USERS FOUND</h3>
         </div>
 
-        <div th:unless="${#lists.isEmpty(users)}" class="table-container">
-            <table class="custom-table">
+        <div th:unless="${#lists.isEmpty(users)}" class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+            <table class="w-full">
                 <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Full Name</th>
-                        <th>Department</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                    <tr class="bg-cyber-purple/50">
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">USERNAME</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">FULL NAME</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">DEPARTMENT</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ROLE</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">STATUS</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="user : ${users}">
-                        <td class="font-medium" th:text="${user.username}">username</td>
-                        <td th:text="${user.fullName}">Full Name</td>
-                        <td th:text="${user.department}">IT</td>
-                        <td>
-                            <span th:each="role : ${user.roles}" th:text="${role}"
-                                  class="badge text-xs"
-                                  th:classappend="${role == 'SUPER_ADMIN'} ? 'bg-blue-100 text-blue-800' : (${role == 'EDITOR'} ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800')">ROLE</span>
+                    <tr th:each="user : ${users}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20">
+                        <td class="px-4 py-3 text-cyber-neon font-bold" th:text="${user.username}">username</td>
+                        <td class="px-4 py-3 text-white" th:text="${user.fullName}">Full Name</td>
+                        <td class="px-4 py-3 text-cyber-blue" th:text="${user.department}">IT</td>
+                        <td class="px-4 py-3">
+                            <th:block th:each="role : ${user.roles}">
+                                <span th:if="${role.name() == 'SUPER_ADMIN'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-pink/20 text-cyber-pink">SUPER_ADMIN</span>
+                                <span th:if="${role.name() == 'EDITOR'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">EDITOR</span>
+                                <span th:if="${role.name() == 'VIEWER'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-blue/20 text-cyber-blue">VIEWER</span>
+                            </th:block>
                         </td>
-                        <td>
-                            <span th:text="${user.isActive ? 'Active' : 'Inactive'}"
-                                  class="badge"
-                                  th:classappend="${user.isActive} ? 'badge-active' : 'badge-free'">Active</span>
+                        <td class="px-4 py-3">
+                            <span th:if="${user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">ACTIVE</span>
+                            <span th:if="${!user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-red/20 text-cyber-red">INACTIVE</span>
                         </td>
-                        <td>
-                            <div class="flex flex-wrap gap-2">
-                                <a th:href="@{/users/{id}/edit(id=${user.id})}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
-                                <a th:href="@{/users/{id}/toggle(id=${user.id})}" class="text-amber-600 hover:text-amber-800 text-sm"
-                                   th:text="${user.isActive ? 'Disable' : 'Enable'}">Toggle</a>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2">
+                                <a th:href="@{/users/{id}/edit(id=${user.id})}" class="text-cyber-neon hover:text-white text-sm font-semibold">EDIT</a>
+                                <a th:href="@{/users/{id}/toggle(id=${user.id})}" class="text-gray-400 hover:text-white text-sm font-semibold">
+                                    <span th:text="${user.isActive ? 'DISABLE' : 'ENABLE'}">Toggle</span>
+                                </a>
                                 <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" class="inline">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                    <button type="submit" class="text-red-600 hover:text-red-800 text-sm">Delete</button>
+                                    <button type="submit" class="text-cyber-red hover:text-white text-sm font-semibold">DELETE</button>
                                 </form>
                             </div>
                         </td>

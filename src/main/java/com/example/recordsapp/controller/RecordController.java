@@ -1,8 +1,8 @@
 package com.example.recordsapp.controller;
 
+import com.example.recordsapp.model.IpAddress;
 import com.example.recordsapp.model.IpHistory;
 import com.example.recordsapp.model.Record;
-import com.example.recordsapp.model.RecordStatus;
 import com.example.recordsapp.service.RecordService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,37 +34,36 @@ public class RecordController {
                       @RequestParam(name = "department", required = false) String department,
                       @RequestParam(name = "status", required = false) String status,
                       Model model) {
-        List<Record> records;
-        String filterInfo = "";
+        List<Record> records = recordService.findAll();
+        StringBuilder filterInfo = new StringBuilder();
 
         if (status != null && !status.isBlank()) {
-            RecordStatus recordStatus = RecordStatus.valueOf(status);
-            records = recordService.findByStatus(recordStatus);
-            filterInfo = "Status: " + recordStatus;
-            if (name != null && !name.isBlank()) {
-                records = records.stream()
-                        .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
-                        .toList();
-                filterInfo += ", Name: " + name;
-            } else if (department != null && !department.isBlank()) {
-                records = records.stream()
-                        .filter(r -> r.getDepartment() != null && r.getDepartment().toLowerCase().contains(department.toLowerCase()))
-                        .toList();
-                filterInfo += ", Department: " + department;
-            }
-        } else if (name != null && !name.isBlank()) {
-            records = recordService.findByNameContaining(name);
-            filterInfo = "Name: " + name;
-        } else if (department != null && !department.isBlank()) {
-            records = recordService.findByDepartmentContaining(department);
-            filterInfo = "Department: " + department;
-        } else {
-            records = recordService.findAll();
+            boolean showActive = "ACTIVE".equalsIgnoreCase(status);
+            records = records.stream()
+                    .filter(r -> r.isActive() == showActive)
+                    .toList();
+            filterInfo.append("Status: ").append(status);
+        }
+
+        if (name != null && !name.isBlank()) {
+            records = records.stream()
+                    .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
+                    .toList();
+            if (filterInfo.length() > 0) filterInfo.append(", ");
+            filterInfo.append("Name: ").append(name);
+        }
+
+        if (department != null && !department.isBlank()) {
+            records = records.stream()
+                    .filter(r -> r.getDepartment() != null && r.getDepartment().toLowerCase().contains(department.toLowerCase()))
+                    .toList();
+            if (filterInfo.length() > 0) filterInfo.append(", ");
+            filterInfo.append("Department: ").append(department);
         }
 
         model.addAttribute("records", records);
         model.addAttribute("departments", recordService.getAllDepartments());
-        model.addAttribute("filterInfo", filterInfo);
+        model.addAttribute("filterInfo", filterInfo.length() > 0 ? filterInfo.toString() : "");
         return "records/list";
     }
 
@@ -72,6 +71,8 @@ public class RecordController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
     public String createForm(Model model) {
         model.addAttribute("record", new Record());
+        model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
+        model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
         model.addAttribute("formAction", "/records");
         model.addAttribute("formTitle", "Add New IP Record");
         return "records/form";
@@ -79,14 +80,27 @@ public class RecordController {
 
     @PostMapping("/records")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
-    public String create(@Valid @ModelAttribute("record") Record record, BindingResult bindingResult, Model model) {
+    public String create(@RequestParam String ipAddressStr,
+                        @Valid @ModelAttribute("record") Record record,
+                        BindingResult bindingResult,
+                        Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("formAction", "/records");
             model.addAttribute("formTitle", "Add New IP Record");
+            model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
+            model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
             return "records/form";
         }
-        record.setStatus(RecordStatus.ACTIVE);
-        recordService.save(record);
+        try {
+            recordService.save(record, ipAddressStr);
+        } catch (IllegalStateException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("formAction", "/records");
+            model.addAttribute("formTitle", "Add New IP Record");
+            model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
+            model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+            return "records/form";
+        }
         return "redirect:/records";
     }
 
@@ -94,9 +108,11 @@ public class RecordController {
     public String details(@PathVariable Long id, Model model) {
         Record record = recordService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found with id " + id));
-        List<IpHistory> histories = recordService.findHistoryByIpAddress(record.getIpAddress());
+        if (record.getIpAddressEntity() != null) {
+            List<IpHistory> histories = recordService.findHistoryByIpAddress(record.getIpAddressEntity().getIpAddress());
+            model.addAttribute("histories", histories);
+        }
         model.addAttribute("record", record);
-        model.addAttribute("histories", histories);
         return "records/details";
     }
 
@@ -114,9 +130,9 @@ public class RecordController {
     @PostMapping("/records/{id}/edit")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
     public String edit(@PathVariable Long id,
-                     @Valid @ModelAttribute("record") Record updatedRecord,
-                     BindingResult bindingResult,
-                     Model model) {
+                      @Valid @ModelAttribute("record") Record updatedRecord,
+                      BindingResult bindingResult,
+                      Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("formAction", "/records/" + id + "/edit");
             model.addAttribute("formTitle", "Edit IP Record");
@@ -133,8 +149,9 @@ public class RecordController {
         existing.setMacAddress(updatedRecord.getMacAddress());
         existing.setRoom(updatedRecord.getRoom());
         existing.setDepartment(updatedRecord.getDepartment());
+        existing.setUpdatedAt(java.time.LocalDateTime.now());
 
-        recordService.save(existing);
+        recordService.save(existing, existing.getIpAddress());
         return "redirect:/records";
     }
 
@@ -183,9 +200,11 @@ public class RecordController {
     public String history(@PathVariable Long id, Model model) {
         Record record = recordService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found with id " + id));
-        List<IpHistory> histories = recordService.findHistoryByIpAddress(record.getIpAddress());
+        if (record.getIpAddressEntity() != null) {
+            List<IpHistory> histories = recordService.findHistoryByIpAddress(record.getIpAddressEntity().getIpAddress());
+            model.addAttribute("histories", histories);
+        }
         model.addAttribute("record", record);
-        model.addAttribute("histories", histories);
         return "records/history";
     }
 
@@ -194,32 +213,31 @@ public class RecordController {
                           @RequestParam(name = "department", required = false) String department,
                           @RequestParam(name = "status", required = false) String status,
                           Model model) {
-        List<Record> records;
+        List<Record> records = recordService.findAll();
         String filterInfo = "";
 
         if (status != null && !status.isBlank()) {
-            RecordStatus recordStatus = RecordStatus.valueOf(status);
-            records = recordService.findByStatus(recordStatus);
-            filterInfo = "Status: " + recordStatus;
-            if (name != null && !name.isBlank()) {
-                records = records.stream()
-                        .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
-                        .toList();
-                filterInfo += ", Name: " + name;
-            } else if (department != null && !department.isBlank()) {
-                records = records.stream()
-                        .filter(r -> r.getDepartment() != null && r.getDepartment().toLowerCase().contains(department.toLowerCase()))
-                        .toList();
-                filterInfo += ", Department: " + department;
-            }
-        } else if (name != null && !name.isBlank()) {
-            records = recordService.findByNameContaining(name);
-            filterInfo = "Name: " + name;
-        } else if (department != null && !department.isBlank()) {
-            records = recordService.findByDepartmentContaining(department);
-            filterInfo = "Department: " + department;
-        } else {
-            records = recordService.findAll();
+            boolean showActive = "ACTIVE".equalsIgnoreCase(status);
+            records = records.stream()
+                    .filter(r -> r.isActive() == showActive)
+                    .toList();
+            filterInfo = "Status: " + status;
+        }
+
+        if (name != null && !name.isBlank()) {
+            records = records.stream()
+                    .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
+                    .toList();
+            if (!filterInfo.isEmpty()) filterInfo += ", ";
+            filterInfo += "Name: " + name;
+        }
+
+        if (department != null && !department.isBlank()) {
+            records = records.stream()
+                    .filter(r -> r.getDepartment() != null && r.getDepartment().toLowerCase().contains(department.toLowerCase()))
+                    .toList();
+            if (!filterInfo.isEmpty()) filterInfo += ", ";
+            filterInfo += "Department: " + department;
         }
 
         if (filterInfo.isEmpty()) {

@@ -1,5 +1,6 @@
 com/example/recordsapp/RecordsAppApplication.class
 com/example/recordsapp/model/Role.class
+com/example/recordsapp/repository/IpAddressRepository.class
 com/example/recordsapp/model/RecordStatus.class
 com/example/recordsapp/security/SecurityConfig.class
 com/example/recordsapp/repository/UserRepository.class
@@ -11,9 +12,11 @@ com/example/recordsapp/repository/RecordRepository.class
 com/example/recordsapp/controller/RecordController.class
 com/example/recordsapp/repository/IpHistoryRepository.class
 com/example/recordsapp/controller/UserController.class
+com/example/recordsapp/controller/IpAddressController.class
 com/example/recordsapp/security/CustomUserDetailsService.class
 com/example/recordsapp/service/PdfService.class
 com/example/recordsapp/model/AppUser.class
 com/example/recordsapp/service/RecordService.class
 com/example/recordsapp/controller/AdminController.class
+com/example/recordsapp/model/IpAddress.class
 com/example/recordsapp/config/DataInitializer.class

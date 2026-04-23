@@ -1,14 +1,6 @@
 package com.example.recordsapp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -34,23 +26,18 @@ public class Record {
     @Column(name = "ext_number", length = 20)
     private String extNumber;
 
-    @Pattern(regexp = "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$", message = "Invalid IP Address")
-    @Column(name = "ip_address", length = 45)
-    private String ipAddress;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ip_address_id")
+    private IpAddress ipAddress;
 
-    @Pattern(regexp = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$", message = "Invalid MAC Address")
     @Column(name = "mac_address", length = 17)
     private String macAddress;
 
     @Column(length = 50)
     private String room;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = true)
     private String department;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RecordStatus status = RecordStatus.ACTIVE;
 
     @Column(name = "assigned_at")
     private LocalDateTime assignedAt;
@@ -67,10 +54,7 @@ public class Record {
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = RecordStatus.ACTIVE;
-        }
-        if (this.assignedAt == null && this.status == RecordStatus.ACTIVE) {
+        if (this.assignedAt == null && this.ipAddress != null && this.ipAddress.getIsAssigned()) {
             this.assignedAt = LocalDateTime.now();
         }
     }
@@ -116,10 +100,14 @@ public class Record {
     }
 
     public String getIpAddress() {
+        return ipAddress != null ? ipAddress.getIpAddress() : null;
+    }
+
+    public IpAddress getIpAddressEntity() {
         return ipAddress;
     }
 
-    public void setIpAddress(String ipAddress) {
+    public void setIpAddress(IpAddress ipAddress) {
         this.ipAddress = ipAddress;
     }
 
@@ -145,14 +133,6 @@ public class Record {
 
     public void setDepartment(String department) {
         this.department = department;
-    }
-
-    public RecordStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(RecordStatus status) {
-        this.status = status;
     }
 
     public LocalDateTime getAssignedAt() {
@@ -188,10 +168,6 @@ public class Record {
     }
 
     public boolean isActive() {
-        return status == RecordStatus.ACTIVE;
-    }
-
-    public boolean isFree() {
-        return status == RecordStatus.FREE;
+        return ipAddress != null && ipAddress.getIsAssigned();
     }
 }

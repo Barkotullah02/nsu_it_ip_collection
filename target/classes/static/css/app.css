@@ -1,23 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #023e8a;
-    --primary-dark: #03045e;
-    --bg: #f8f9fa;
-    --surface: #ffffff;
-    --ink: #1f2937;
-    --muted: #6b7280;
-    --text-dark: #03045e;
-    --text-light: #ffffff;
-    --primary-light: #0077b6;
-    --accent: #00b4d8;
-    --danger: #dc2626;
-    --success: #16a34a;
-    --border: #e5e7eb;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff00ff;
+    --neon-green: #00ff88;
 }
 
 * {
@@ -26,82 +12,90 @@
 
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
-    color: var(--ink);
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    min-height: 100vh;
+    font-family: 'Rajdhani', sans-serif;
 }
 
-@layer components {
-    .btn {
-        @apply px-4 py-2 rounded-lg font-semibold transition-all duration-200 cursor-pointer;
-    }
+.font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+}
 
-    .btn-primary {
-        @apply bg-blue-700 hover:bg-blue-800 text-white;
-    }
+.font-rajdhani {
+    font-family: 'Rajdhani', sans-serif;
+}
 
-    .btn-danger {
-        @apply bg-red-600 hover:bg-red-700 text-white;
-    }
+.font-mono {
+    font-family: 'Courier New', monospace;
+}
 
-    .btn-success {
-        @apply bg-green-600 hover:bg-green-700 text-white;
-    }
+.btn {
+    @apply px-4 py-2 rounded-lg font-semibold transition-all;
+}
 
-    .btn-warning {
-        @apply bg-amber-500 hover:bg-amber-600 text-white;
-    }
+.btn-primary {
+    @apply bg-cyber-neon/20 border border-cyber-neon/50 text-cyber-neon;
+}
 
-    .btn-secondary {
-        @apply bg-gray-500 hover:bg-gray-600 text-white;
-    }
+.card {
+    @apply bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-5;
+}
 
-    .card {
-        @apply bg-white rounded-xl shadow-lg p-5;
-    }
+.form-input {
+    @apply w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white;
+    @apply focus:outline-none focus:border-cyber-neon;
+}
 
-    .form-input {
-        @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
-    }
+.badge {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide;
+}
 
-    .badge {
-        @apply inline-block px-3 py-1 rounded-full text-xs font-semibold;
-    }
+.badge-active {
+    @apply bg-cyber-green/20 border border-cyber-green/50 text-cyber-green;
+}
 
-    .badge-active {
-        @apply bg-green-100 text-green-800;
-    }
+.badge-free {
+    @apply bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink;
+}
 
-    .badge-free {
-        @apply bg-amber-100 text-amber-800;
-    }
+.table-container {
+    @apply bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden;
+}
 
-    .table-container {
-        @apply overflow-x-auto bg-white rounded-xl shadow-lg;
-    }
+.custom-table {
+    @apply w-full;
+}
 
-    .custom-table {
-        @apply w-full;
-    }
+.custom-table th {
+    @apply px-4 py-4 text-left;
+    @apply text-cyber-neon font-orbitron font-bold tracking-wider text-sm;
+    background: rgba(26, 10, 46, 0.5);
+}
 
-    .custom-table th {
-        @apply px-4 py-3 text-left bg-blue-700 text-white font-medium;
-    }
+.custom-table td {
+    @apply px-4 py-3;
+    @apply border-b border-cyber-neon/10;
+}
 
-    .custom-table th:first-child {
-        @apply rounded-tl-xl;
-    }
+.custom-table tr:hover {
+    background: rgba(26, 10, 46, 0.2);
+}
 
-    .custom-table th:last-child {
-        @apply rounded-tr-xl;
-    }
+.neon-glow {
+    text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+}
 
-    .custom-table td {
-        @apply px-4 py-3 border-b border-gray-200;
-    }
+@keyframes neon-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
 
-    .custom-table tr:hover {
-        @apply bg-gray-50;
-    }
+.neon-text {
+    animation: neon-pulse 2s ease-in-out infinite;
+}
+
+a {
+    @apply transition-all;
+}
+
+a:hover {
+    @apply scale-105;
 }

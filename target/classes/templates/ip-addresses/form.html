@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add IP Address</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">ADD IP ADDRESS</h1>
+            <a th:href="@{/ip-addresses}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition">← BACK</a>
+        </header>
+
+        <form th:action="@{/ip-addresses}" th:object="${ipAddress}" method="post" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6 max-w-xl mx-auto">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">IP ADDRESS *</label>
+                    <input type="text" th:field="*{ipAddress}" placeholder="192.168.1.1" required
+                           class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white font-mono focus:outline-none focus:border-cyber-neon">
+                </div>
+                <div>
+                    <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">MAC ADDRESS</label>
+                    <input type="text" th:field="*{macAddress}" placeholder="00:1A:2B:3C:4D:5E"
+                           class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white font-mono focus:outline-none focus:border-cyber-neon">
+                </div>
+                <div>
+                    <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">ROOM</label>
+                    <input type="text" th:field="*{room}" placeholder="Room 101"
+                           class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white focus:outline-none focus:border-cyber-neon">
+                </div>
+            </div>
+            <div class="flex gap-4 mt-8">
+                <button type="submit" class="flex-1 py-3 bg-cyber-neon/20 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon/30 font-orbitron font-bold rounded-lg transition-all hover:scale-[1.02]">SAVE 💾</button>
+                <a th:href="@{/ip-addresses}" class="flex-1 text-center py-3 border border-gray-600 text-gray-400 hover:text-white rounded-lg font-semibold transition">CANCEL</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

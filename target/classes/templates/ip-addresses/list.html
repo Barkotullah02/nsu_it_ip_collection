@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras-spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Addresses - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div class="text-center md:text-left">
+                <h1 class="text-3xl md:text-5xl font-orbitron font-bold text-cyber-neon tracking-wider">IP ADDRESSES</h1>
+                <p class="text-cyber-blue mt-2 text-lg font-semibold">MANAGE IP POOL</p>
+            </div>
+            <nav class="flex flex-wrap justify-center gap-3">
+                <a th:href="@{/records}" class="px-5 py-2.5 bg-cyber-purple/30 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition-all hover:scale-105">📋 Records</a>
+                <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/ip-addresses/new}" class="px-5 py-2.5 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold transition-all hover:scale-105">+ ADD IP</a>
+            </nav>
+        </header>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-5 text-center">
+                <h3 class="text-cyber-neon font-orbitron text-xl font-bold" th:text="${#lists.size(allIps)}">0</h3>
+                <p class="text-gray-400">TOTAL IPs</p>
+            </div>
+            <div class="bg-cyber-green/10 border border-cyber-green/30 rounded-xl p-5 text-center">
+                <h3 class="text-cyber-green font-orbitron text-xl font-bold" th:text="${#lists.size(freeIps)}">0</h3>
+                <p class="text-gray-400">FREE</p>
+            </div>
+            <div class="bg-cyber-pink/10 border border-cyber-pink/30 rounded-xl p-5 text-center">
+                <h3 class="text-cyber-pink font-orbitron text-xl font-bold" th:text="${#lists.size(assignedIps)}">0</h3>
+                <p class="text-gray-400">ASSIGNED</p>
+            </div>
+        </div>
+
+        <div class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-cyber-purple/50">
+                        <th class="px-4 py-4 text-left text-cyber-neon font-orbitron font-bold tracking-wider text-sm">IP ADDRESS</th>
+                        <th class="px-4 py-4 text-left text-cyber-neon font-orbitron font-bold tracking-wider text-sm">MAC ADDRESS</th>
+                        <th class="px-4 py-4 text-left text-cyber-neon font-orbitron font-bold tracking-wider text-sm">ROOM</th>
+                        <th class="px-4 py-4 text-left text-cyber-neon font-orbitron font-bold tracking-wider text-sm">STATUS</th>
+                        <th class="px-4 py-4 text-left text-cyber-neon font-orbitron font-bold tracking-wider text-sm">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ip : ${allIps}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20 transition">
+                        <td class="px-4 py-3 text-cyber-neon font-mono font-bold" th:text="${ip.ipAddress}">192.168.1.1</td>
+                        <td class="px-4 py-3 text-gray-300 font-mono" th:text="${ip.macAddress != null ? ip.macAddress : '-'}">-</td>
+                        <td class="px-4 py-3 text-gray-300" th:text="${ip.room != null ? ip.room : '-'}">-</td>
+                        <td class="px-4 py-3">
+                            <span th:if="${ip.isAssigned}" class="px-3 py-1 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink rounded-full text-xs font-bold tracking-wide">ASSIGNED</span>
+                            <span th:unless="${ip.isAssigned}" class="px-3 py-1 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green rounded-full text-xs font-bold tracking-wide">FREE</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <form sec:authorize="hasRole('SUPER_ADMIN')" th:if="${!ip.isAssigned}" th:action="@{/ip-addresses/{id}/delete(id=${ip.id})}" method="post" class="inline">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="text-cyber-red hover:text-white text-sm font-semibold" onclick="return confirm('Delete this IP address?')">DELETE</button>
+                            </form>
+                            <span th:if="${ip.isAssigned}" class="text-gray-500 text-sm">In Use</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(allIps)}">
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">No IP addresses configured yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

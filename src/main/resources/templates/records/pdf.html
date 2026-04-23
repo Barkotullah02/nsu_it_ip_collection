@@ -5,62 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP Records - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
     <style>
         @media print {
-            body { background: white; }
-            .no-print { display: none; }
-            .card { box-shadow: none; border: 1px solid #ddd; }
-            .table-container { box-shadow: none; }
+            body { background: white !important; }
+            .no-print { display: none !important; }
+            .card { box-shadow: none !important; }
+            .table-container { box-shadow: none !important; }
         }
     </style>
 </head>
-<body class="bg-white font-poppins">
+<body class="bg-white font-rajdhani">
     <div class="p-8">
         <div class="text-center mb-6 no-print">
-            <button onclick="window.print()" class="px-6 py-2 bg-blue-700 text-white rounded-lg">Print / Save as PDF</button>
-            <a href="/records" class="px-6 py-2 ml-4 bg-gray-500 text-white rounded-lg">Back</a>
+            <button onclick="window.print()" class="px-6 py-2 bg-cyber-neon text-cyber-dark font-bold rounded-lg">🖨 PRINT / SAVE PDF</button>
+            <a href="/records" class="px-6 py-2 ml-4 bg-gray-500 text-white rounded-lg">BACK</a>
         </div>
 
         <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">NSU IT - IP Address Management</h1>
-            <p class="text-lg text-gray-600" th:text="${filterInfo}">All Records</p>
+            <h1 class="text-2xl font-orbitron font-bold text-gray-800">NSU IT - IP ADDRESS MANAGEMENT</h1>
+            <p class="text-lg text-gray-600 font-semibold" th:text="${filterInfo}">All Records</p>
             <p class="text-sm text-gray-500">Generated: <span th:text="${generatedAt}"></span></p>
         </div>
 
-        <div class="table-container">
-            <table class="custom-table">
+        <div class="border border-gray-300 rounded-xl overflow-hidden">
+            <table class="w-full">
                 <thead>
-                    <tr>
-                        <th class="bg-blue-700 text-white">SL</th>
-                        <th class="bg-blue-700 text-white">IP Address</th>
-                        <th class="bg-blue-700 text-white">Name</th>
-                        <th class="bg-blue-700 text-white">Designation</th>
-                        <th class="bg-blue-700 text-white">Dept</th>
-                        <th class="bg-blue-700 text-white">Ext</th>
-                        <th class="bg-blue-700 text-white">Room</th>
-                        <th class="bg-blue-700 text-white">Status</th>
+                    <tr class="bg-gray-800">
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">SL</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">IP ADDRESS</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">NAME</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">DESIGNATION</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">DEPT</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">EXT</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">ROOM</th>
+                        <th class="px-4 py-3 text-left text-white font-orbitron font-bold text-sm">STATUS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="record : ${records}">
-                        <td th:text="${record.sl}">1</td>
-                        <td class="font-mono text-blue-600" th:text="${record.ipAddress}">192.168.1.1</td>
-                        <td th:text="${record.name}">-</td>
-                        <td th:text="${record.designation}">-</td>
-                        <td th:text="${record.department}">-</td>
-                        <td th:text="${record.extNumber}">-</td>
-                        <td th:text="${record.room}">-</td>
-                        <td>
-                            <span th:if="${record.status == 'ACTIVE'}" class="badge badge-active">Active</span>
-                            <span th:if="${record.status == 'FREE'}" class="badge badge-free">Free</span>
+                        <td class="px-4 py-3 text-gray-800 font-mono" th:text="${record.sl}">1</td>
+                        <td class="px-4 py-3 text-blue-600 font-mono font-bold" th:text="${record.ipAddress}">192.168.1.1</td>
+                        <td class="px-4 py-3 text-gray-800" th:text="${record.name}">-</td>
+                        <td class="px-4 py-3 text-gray-600" th:text="${record.designation}">-</td>
+                        <td class="px-4 py-3 text-blue-600" th:text="${record.department}">-</td>
+                        <td class="px-4 py-3 text-gray-600" th:text="${record.extNumber}">-</td>
+                        <td class="px-4 py-3 text-gray-600" th:text="${record.room}">-</td>
+                        <td class="px-4 py-3">
+                            <span th:if="${record.status == 'ACTIVE'}" class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">ACTIVE</span>
+                            <span th:if="${record.status == 'FREE'}" class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">FREE</span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-4 text-right text-gray-500">
+        <div class="mt-4 text-right text-gray-600 font-orbitron">
             Total: <span th:text="${#lists.size(records)}">0</span> records
         </div>
     </div>

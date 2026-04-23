@@ -1,77 +1,58 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras-spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP History - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#023e8a',
-                        'primary-dark': '#03045e',
-                        'primary-light': '#0077b6',
-                        accent: '#00b4d8',
-                    },
-                    fontFamily: {
-                        poppins: ['Poppins', 'sans-serif'],
-                    }
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
                 }
             }
         }
     </script>
+    <style>
+        :root { --neon-cyan: #00f5ff; }
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+        .neon-glow { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-primary-dark via-primary to-primary-light min-h-screen font-poppins">
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
     <div class="container mx-auto px-4 py-8">
         <header class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-white">IP Address History</h1>
-                <p class="text-blue-200 mt-1" th:text="${record.ipAddress}">192.168.1.1</p>
-            </div>
-            <a th:href="@{/records/{id}(id=${record.id})}" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition">Back to Details</a>
+            <div><h1 class="text-3xl font-orbitron font-bold text-cyber-neon neon-glow">IP HISTORY</h1><p class="text-cyber-blue mt-1 font-mono" th:text="${record.ipAddress}">192.168.1.1</p></div>
+            <a th:href="@{/records/{id}(id=${record.id})}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition">← BACK</a>
         </header>
-
-        <div class="card">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Full Assignment History</h3>
-
-            <div th:if="${#lists.isEmpty(histories)}" class="text-center py-8 text-gray-500">
-                No history records found.
-            </div>
-
-            <div th:unless="${#lists.isEmpty(histories)}" class="overflow-x-auto">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>SL</th>
-                            <th>Name</th>
-                            <th>Designation</th>
-                            <th>Department</th>
-                            <th>Ext.</th>
-                            <th>Room</th>
-                            <th>MAC Address</th>
-                            <th>Assigned Date</th>
-                            <th>Released Date</th>
-                        </tr>
-                    </thead>
+        <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6">
+            <h3 class="text-lg font-orbitron font-bold text-cyber-neon mb-4">FULL ASSIGNMENT HISTORY</h3>
+            <div th:if="${#lists.isEmpty(histories)}" class="text-center py-8 text-gray-500">No history records found.</div>
+            <div th:unless="${#lists.isEmpty(histories)}" class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+                <table class="w-full">
+                    <thead><tr class="bg-cyber-purple/50">
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">NAME</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">DESIGNATION</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">DEPARTMENT</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">EXT</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">ROOM</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">FROM</th>
+                        <th class="px-3 py-3 text-left text-cyber-neon font-orbitron text-xs">TO</th>
+                    </tr></thead>
                     <tbody>
-                        <tr th:each="history, iter : ${histories}">
-                            <td th:text="${iter.index + 1}">1</td>
-                            <td th:text="${history.name}">-</td>
-                            <td th:text="${history.designation}">-</td>
-                            <td th:text="${history.department}">-</td>
-                            <td th:text="${history.extNumber}">-</td>
-                            <td th:text="${history.room}">-</td>
-                            <td class="font-mono text-xs" th:text="${history.macAddress}">-</td>
-                            <td th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
-                            <td>
-                                <span th:if="${history.releasedAt != null}" th:text="${#temporals.format(history.releasedAt, 'yyyy-MM-dd')}">-</span>
-                                <span th:if="${history.releasedAt == null}" class="text-green-600 font-medium">Current</span>
+                        <tr th:each="history, iter : ${histories}" class="border-b border-cyber-neon/10">
+                            <td class="px-3 py-3 text-white" th:text="${history.name}">-</td>
+                            <td class="px-3 py-3 text-gray-300" th:text="${history.designation}">-</td>
+                            <td class="px-3 py-3 text-cyber-blue" th:text="${history.department}">-</td>
+                            <td class="px-3 py-3 text-gray-400" th:text="${history.extNumber}">-</td>
+                            <td class="px-3 py-3 text-gray-400" th:text="${history.room}">-</td>
+                            <td class="px-3 py-3 text-gray-400" th:text="${#temporals.format(history.assignedAt, 'yyyy-MM-dd')}">-</td>
+                            <td class="px-3 py-3">
+                                <span th:if="${history.releasedAt != null}" th:text="${#temporals.format(history.releasedAt, 'yyyy-MM-dd')}" class="text-gray-400">-</span>
+                                <span th:if="${history.releasedAt == null}" class="text-cyber-green font-bold">CURRENT</span>
                             </td>
                         </tr>
                     </tbody>

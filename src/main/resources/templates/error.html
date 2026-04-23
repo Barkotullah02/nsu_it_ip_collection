@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+        .neon-glow { text-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff; }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani flex items-center justify-center">
+    <div class="text-center">
+        <div class="mb-8">
+            <h1 class="text-9xl font-orbitron font-bold text-cyber-red neon-glow">500</h1>
+            <p class="text-2xl font-orbitron text-gray-400 mt-4">SYSTEM ERROR</p>
+        </div>
+
+        <div class="bg-cyber-purple/20 border border-cyber-red/30 rounded-xl p-8 max-w-lg">
+            <h2 class="text-xl font-orbitron text-cyber-red mb-4">⚠ ERROR OCCURRED</h2>
+            <p class="text-gray-300 mb-4" th:text="${error != null ? error : 'An unexpected error has occurred. Please try again.'}">
+                An unexpected error has occurred.
+            </p>
+            <p class="text-gray-500 text-sm" th:if="${message != null}" th:text="${message}"></p>
+        </div>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <a href="/" class="px-6 py-3 bg-cyber-neon/20 border border-cyber-neon text-cyber-neon hover:bg-cyber-neon/30 font-bold rounded-lg">
+                HOME 🏠
+            </a>
+            <a href="javascript:history.back()" class="px-6 py-3 border border-gray-600 text-gray-400 hover:text-white rounded-lg">
+                GO BACK ↩
+            </a>
+            <a href="/logout" class="px-6 py-3 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg">
+                LOGOUT 🚪
+            </a>
+        </div>
+
+        <p class="text-gray-600 text-xs mt-8">
+            NSU IT - IP Address Management System
+        </p>
+    </div>
+</body>
+</html>
