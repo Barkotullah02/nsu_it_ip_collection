@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - IP Collection</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="color: var(--text-light); font-size: 2.5rem; margin-bottom: 0.5rem;">IP Collection System</h1>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Institution IP Address Management</p>
+    </div>
+
+    <div class="form-card" style="max-width: 400px; width: 100%;">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Sign In</h2>
+
+        <p th:if="${param.error}" class="alert alert-error">Invalid username or password.</p>
+        <p th:if="${param.logout}" class="alert alert-success">You have been signed out.</p>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required>
+            </div>
+
+            <button type="submit" style="width: 100%; margin-top: 0.5rem;">Login</button>
+        </form>
+    </div>
+
+    <p class="hint" style="text-align: center; margin-top: 1.5rem; color: rgba(255,255,255,0.7);">
+        Default credentials:<br>
+        <strong>superadmin / super123</strong> (Full Access)<br>
+        <strong>editor / editor123</strong> (Add/Edit Records)<br>
+        <strong>viewer / viewer123</strong> (View Only)
+    </p>
+</main>
+</body>
+</html>

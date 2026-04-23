@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Collection - Records</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <header class="toolbar">
+        <h1>IP Records</h1>
+        <nav>
+            <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/admin}">Manage Users</a>
+            <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/new}">Add Record</a>
+            <form th:action="@{/logout}" method="post" class="inline-form">
+                <button type="submit">Logout</button>
+            </form>
+        </nav>
+    </header>
+
+    <div class="filter-bar" style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px;">
+        <form th:action="@{/records}" method="get" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; width: 100%;">
+            <div class="form-group">
+                <label style="color: var(--text-light);">Search by Name</label>
+                <input type="text" name="name" th:value="${param.name}" placeholder="Enter name..." style="background: rgba(255,255,255,0.95);">
+            </div>
+            <div class="form-group">
+                <label style="color: var(--text-light);">Filter by Department</label>
+                <select name="department" style="background: rgba(255,255,255,0.95);">
+                    <option value="">All Departments</option>
+                    <option th:each="dept : ${departments}" th:value="${dept}" th:text="${dept}" th:selected="${param.department == dept}">Department</option>
+                </select>
+            </div>
+            <button type="submit">Filter</button>
+            <a th:href="@{/records}" style="background: rgba(255,255,255,0.25);">Clear</a>
+        </form>
+    </div>
+
+    <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+        <h3>No records found</h3>
+        <p style="color: rgba(255,255,255,0.8);">No IP records match your criteria or none exist yet.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(records)}" class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Ext.</th>
+                    <th>IP Address</th>
+                    <th>MAC Address</th>
+                    <th>Room</th>
+                    <th>Department</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="record : ${records}">
+                    <td th:text="${record.sl}">1</td>
+                    <td th:text="${record.name}">John Doe</td>
+                    <td th:text="${record.designation}">Professor</td>
+                    <td th:text="${record.extNumber}">123</td>
+                    <td th:text="${record.ipAddress}">192.168.1.1</td>
+                    <td th:text="${record.macAddress}">00:1A:2B:3C:4D:5E</td>
+                    <td th:text="${record.room}">Room 101</td>
+                    <td th:text="${record.department}">ECE</td>
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/records/{id}(id=${record.id})}" style="background: var(--primary); padding: 0.35rem 0.65rem; font-size: 0.85rem;">View</a>
+                            <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/{id}/edit(id=${record.id})}" style="background: var(--accent); padding: 0.35rem 0.65rem; font-size: 0.85rem;">Edit</a>
+                            <form sec:authorize="hasRole('SUPER_ADMIN')" th:action="@{/records/{id}/delete(id=${record.id})}" method="post" class="inline-form">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="danger" style="padding: 0.35rem 0.65rem; font-size: 0.85rem;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

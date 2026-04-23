@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formTitle}">IP Record Form</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <header class="toolbar">
+        <h1 th:text="${formTitle}">IP Record Form</h1>
+        <a th:href="@{/records}">Back to List</a>
+    </header>
+
+    <form th:action="@{${formAction}}" th:object="${record}" method="post" class="form-card">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div class="form-group">
+            <label for="sl">SL Number</label>
+            <input id="sl" type="number" th:field="*{sl}" min="1" required>
+            <p class="error" th:if="${#fields.hasErrors('sl')}" th:errors="*{sl}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name of User</label>
+            <input id="name" type="text" th:field="*{name}" maxlength="100" required>
+            <p class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="designation">Designation</label>
+            <input id="designation" type="text" th:field="*{designation}" maxlength="100" required>
+            <p class="error" th:if="${#fields.hasErrors('designation')}" th:errors="*{designation}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="extNumber">Extension Number</label>
+            <input id="extNumber" type="text" th:field="*{extNumber}" maxlength="20">
+            <p class="error" th:if="${#fields.hasErrors('extNumber')}" th:errors="*{extNumber}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="ipAddress">IP Address</label>
+            <input id="ipAddress" type="text" th:field="*{ipAddress}" placeholder="192.168.1.1" required>
+            <p class="error" th:if="${#fields.hasErrors('ipAddress')}" th:errors="*{ipAddress}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="macAddress">MAC Address</label>
+            <input id="macAddress" type="text" th:field="*{macAddress}" placeholder="00:1A:2B:3C:4D:5E">
+            <p class="error" th:if="${#fields.hasErrors('macAddress')}" th:errors="*{macAddress}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="room">Room</label>
+            <input id="room" type="text" th:field="*{room}" maxlength="50" required>
+            <p class="error" th:if="${#fields.hasErrors('room')}" th:errors="*{room}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="department">Department</label>
+            <input id="department" type="text" th:field="*{department}" placeholder="Department of ECE" required>
+            <p class="error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></p>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Save</button>
+            <a th:href="@{/records}" style="background: var(--muted);">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

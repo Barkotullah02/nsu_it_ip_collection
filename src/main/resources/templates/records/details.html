@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Details</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <header class="toolbar">
+        <h1>IP Record Details</h1>
+        <a th:href="@{/records}">Back to List</a>
+    </header>
+
+    <article class="card" style="max-width: 600px;">
+        <div class="info-row">
+            <span class="info-label">SL Number:</span>
+            <span class="info-value" th:text="${record.sl}">1</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Name:</span>
+            <span class="info-value" th:text="${record.name}">John Doe</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Designation:</span>
+            <span class="info-value" th:text="${record.designation}">Professor</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Extension:</span>
+            <span class="info-value" th:text="${record.extNumber}">123</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">IP Address:</span>
+            <span class="info-value" th:text="${record.ipAddress}">192.168.1.1</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">MAC Address:</span>
+            <span class="info-value" th:text="${record.macAddress}">00:1A:2B:3C:4D:5E</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Room:</span>
+            <span class="info-value" th:text="${record.room}">Room 101</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Department:</span>
+            <span class="info-value" th:text="${record.department}">ECE</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Created:</span>
+            <span class="info-value" th:text="${#temporals.format(record.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</span>
+        </div>
+
+        <div class="actions" sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')">
+            <a th:href="@{/records/{id}/edit(id=${record.id})}">Edit</a>
+            <form sec:authorize="hasRole('SUPER_ADMIN')" th:action="@{/records/{id}/delete(id=${record.id})}" method="post" class="inline-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="danger">Delete</button>
+            </form>
+        </div>
+    </article>
+</main>
+</body>
+</html>

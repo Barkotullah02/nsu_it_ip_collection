@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formTitle}">User Form</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <header class="toolbar">
+        <h1 th:text="${formTitle}">User Form</h1>
+        <a th:href="@{/admin}">Back to Users</a>
+    </header>
+
+    <form th:action="@{${formAction}}" th:object="${user}" method="post" class="form-card">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" type="text" th:field="*{username}" required>
+            <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="password" th:text="${user.id != null} ? 'New Password (leave blank to keep current)' : 'Password'">Password</label>
+            <input id="password" type="password" th:field="*{password}" th:required="${user.id == null}">
+            <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" type="text" th:field="*{fullName}">
+            <p class="error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="department">Department</label>
+            <input id="department" type="text" th:field="*{department}">
+            <p class="error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="roles">Role</label>
+            <select id="roles" th:field="*{roles}" multiple required style="height: 100px;">
+                <option value="SUPER_ADMIN">Super Admin (Full Access)</option>
+                <option value="EDITOR">Editor (Add/Edit Records)</option>
+                <option value="VIEWER">Viewer (View Only)</option>
+            </select>
+            <p class="hint">Hold Ctrl/Cmd to select multiple roles</p>
+        </div>
+
+        <div class="actions">
+            <button type="submit">Save</button>
+            <a th:href="@{/admin}" style="background: var(--muted);">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
