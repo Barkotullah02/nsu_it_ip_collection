@@ -1,8 +1,10 @@
 package com.example.recordsapp.service;
 
+import com.example.recordsapp.model.Department;
 import com.example.recordsapp.model.IpAddress;
 import com.example.recordsapp.model.IpHistory;
 import com.example.recordsapp.model.Record;
+import com.example.recordsapp.repository.DepartmentRepository;
 import com.example.recordsapp.repository.IpAddressRepository;
 import com.example.recordsapp.repository.IpHistoryRepository;
 import com.example.recordsapp.repository.RecordRepository;
@@ -18,11 +20,16 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final IpAddressRepository ipAddressRepository;
+    private final DepartmentRepository departmentRepository;
     private final IpHistoryRepository ipHistoryRepository;
 
-    public RecordService(RecordRepository recordRepository, IpAddressRepository ipAddressRepository, IpHistoryRepository ipHistoryRepository) {
+    public RecordService(RecordRepository recordRepository, 
+                         IpAddressRepository ipAddressRepository,
+                         DepartmentRepository departmentRepository,
+                         IpHistoryRepository ipHistoryRepository) {
         this.recordRepository = recordRepository;
         this.ipAddressRepository = ipAddressRepository;
+        this.departmentRepository = departmentRepository;
         this.ipHistoryRepository = ipHistoryRepository;
     }
 
@@ -35,11 +42,17 @@ public class RecordService {
     }
 
     public List<Record> findByDepartmentContaining(String department) {
-        return recordRepository.findByDepartmentContainingIgnoreCase(department);
+        return recordRepository.findByDepartment(
+            departmentRepository.findByNameIgnoreCase(department).orElse(null)
+        );
     }
 
     public List<String> getAllDepartments() {
         return recordRepository.findAllDepartments();
+    }
+
+    public List<Department> getAllDepartmentEntities() {
+        return departmentRepository.findAll();
     }
 
     public Optional<Record> findById(Long id) {
@@ -62,8 +75,20 @@ public class RecordService {
         return ipAddressRepository.findByIsAssigned(true);
     }
 
+    private Department findOrCreateDepartment(String departmentName) {
+        if (departmentName == null || departmentName.isBlank()) {
+            return null;
+        }
+        return departmentRepository.findByNameIgnoreCase(departmentName)
+                .orElseGet(() -> {
+                    Department newDept = new Department();
+                    newDept.setName(departmentName.trim());
+                    return departmentRepository.save(newDept);
+                });
+    }
+
     @Transactional
-    public Record save(Record record, String ipAddressStr) {
+    public Record save(Record record, String ipAddressStr, String departmentName) {
         IpAddress ipAddress = ipAddressRepository.findByIpAddress(ipAddressStr)
                 .orElseGet(() -> {
                     IpAddress newIp = new IpAddress();
@@ -79,6 +104,8 @@ public class RecordService {
         ipAddress.setIsAssigned(true);
         ipAddressRepository.save(ipAddress);
 
+        Department department = findOrCreateDepartment(departmentName);
+        record.setDepartment(department);
         record.setIpAddress(ipAddress);
         record.setAssignedAt(LocalDateTime.now());
 
@@ -95,6 +122,11 @@ public class RecordService {
             ipAddress.setUpdatedAt(LocalDateTime.now());
         }
         return ipAddressRepository.save(ipAddress);
+    }
+
+    @Transactional
+    public Department saveDepartment(Department department) {
+        return departmentRepository.save(department);
     }
 
     @Transactional
@@ -118,6 +150,8 @@ public class RecordService {
                 return null;
             }
 
+            String deptName = record.getDepartment();
+
             IpHistory history = new IpHistory();
             history.setIpAddress(ipAddress.getIpAddress());
             history.setName(record.getName());
@@ -125,7 +159,7 @@ public class RecordService {
             history.setExtNumber(record.getExtNumber());
             history.setMacAddress(record.getMacAddress());
             history.setRoom(record.getRoom());
-            history.setDepartment(record.getDepartment());
+            history.setDepartment(deptName);
             history.setAssignedAt(record.getAssignedAt());
             history.setReleasedAt(LocalDateTime.now());
             history.setActive(false);
@@ -150,19 +184,21 @@ public class RecordService {
     }
 
     @Transactional
-    public Record assignToNewUser(Long id, Record newRecord) {
+    public Record assignToNewUser(Long id, Record newRecord, String departmentName) {
         Optional<Record> recordOpt = recordRepository.findById(id);
         if (recordOpt.isPresent()) {
             Record existing = recordOpt.get();
             IpAddress ipAddress = existing.getIpAddressEntity();
 
             if (ipAddress == null || !ipAddress.getIsAssigned()) {
+                Department department = findOrCreateDepartment(departmentName);
+                
                 existing.setName(newRecord.getName());
                 existing.setDesignation(newRecord.getDesignation());
                 existing.setExtNumber(newRecord.getExtNumber());
                 existing.setMacAddress(newRecord.getMacAddress());
                 existing.setRoom(newRecord.getRoom());
-                existing.setDepartment(newRecord.getDepartment());
+                existing.setDepartment(department);
                 existing.setAssignedAt(LocalDateTime.now());
                 existing.setReleasedAt(null);
                 existing.setUpdatedAt(LocalDateTime.now());

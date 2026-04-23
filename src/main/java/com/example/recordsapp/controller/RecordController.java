@@ -1,10 +1,10 @@
 package com.example.recordsapp.controller;
 
+import com.example.recordsapp.model.Department;
 import com.example.recordsapp.model.IpAddress;
 import com.example.recordsapp.model.IpHistory;
 import com.example.recordsapp.model.Record;
 import com.example.recordsapp.service.RecordService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -73,6 +71,7 @@ public class RecordController {
         model.addAttribute("record", new Record());
         model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
         model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+        model.addAttribute("departments", recordService.getAllDepartments());
         model.addAttribute("formAction", "/records");
         model.addAttribute("formTitle", "Add New IP Record");
         return "records/form";
@@ -81,6 +80,7 @@ public class RecordController {
     @PostMapping("/records")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
     public String create(@RequestParam String ipAddressStr,
+                        @RequestParam String departmentName,
                         @Valid @ModelAttribute("record") Record record,
                         BindingResult bindingResult,
                         Model model) {
@@ -89,16 +89,18 @@ public class RecordController {
             model.addAttribute("formTitle", "Add New IP Record");
             model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
             model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+            model.addAttribute("departments", recordService.getAllDepartments());
             return "records/form";
         }
         try {
-            recordService.save(record, ipAddressStr);
+            recordService.save(record, ipAddressStr, departmentName);
         } catch (IllegalStateException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("formAction", "/records");
             model.addAttribute("formTitle", "Add New IP Record");
             model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
             model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+            model.addAttribute("departments", recordService.getAllDepartments());
             return "records/form";
         }
         return "redirect:/records";
@@ -122,6 +124,9 @@ public class RecordController {
         Record record = recordService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found with id " + id));
         model.addAttribute("record", record);
+        model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
+        model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+        model.addAttribute("departments", recordService.getAllDepartments());
         model.addAttribute("formAction", "/records/" + id + "/edit");
         model.addAttribute("formTitle", "Edit IP Record");
         return "records/form";
@@ -130,12 +135,16 @@ public class RecordController {
     @PostMapping("/records/{id}/edit")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
     public String edit(@PathVariable Long id,
+                      @RequestParam String departmentName,
                       @Valid @ModelAttribute("record") Record updatedRecord,
                       BindingResult bindingResult,
                       Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("formAction", "/records/" + id + "/edit");
             model.addAttribute("formTitle", "Edit IP Record");
+            model.addAttribute("ipAddresses", recordService.findAllIpAddresses());
+            model.addAttribute("freeIpAddresses", recordService.findFreeIpAddresses());
+            model.addAttribute("departments", recordService.getAllDepartments());
             return "records/form";
         }
 
@@ -148,10 +157,19 @@ public class RecordController {
         existing.setExtNumber(updatedRecord.getExtNumber());
         existing.setMacAddress(updatedRecord.getMacAddress());
         existing.setRoom(updatedRecord.getRoom());
-        existing.setDepartment(updatedRecord.getDepartment());
         existing.setUpdatedAt(java.time.LocalDateTime.now());
 
-        recordService.save(existing, existing.getIpAddress());
+        Department dept = recordService.getAllDepartmentEntities().stream()
+                .filter(d -> d.getName().equalsIgnoreCase(departmentName))
+                .findFirst()
+                .orElseGet(() -> {
+                    Department newDept = new Department();
+                    newDept.setName(departmentName);
+                    return recordService.saveDepartment(newDept);
+                });
+        existing.setDepartment(dept);
+
+        recordService.save(existing, existing.getIpAddress(), departmentName);
         return "redirect:/records";
     }
 
@@ -175,6 +193,7 @@ public class RecordController {
         Record record = recordService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Record not found with id " + id));
         model.addAttribute("record", record);
+        model.addAttribute("departments", recordService.getAllDepartments());
         model.addAttribute("formAction", "/records/" + id + "/assign");
         model.addAttribute("formTitle", "Assign IP to New User");
         return "records/assign";
@@ -183,16 +202,18 @@ public class RecordController {
     @PostMapping("/records/{id}/assign")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'EDITOR')")
     public String assign(@PathVariable Long id,
+                      @RequestParam String departmentName,
                       @Valid @ModelAttribute("record") Record newRecord,
                       BindingResult bindingResult,
                       Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("formAction", "/records/" + id + "/assign");
             model.addAttribute("formTitle", "Assign IP to New User");
+            model.addAttribute("departments", recordService.getAllDepartments());
             return "records/assign";
         }
 
-        recordService.assignToNewUser(id, newRecord);
+        recordService.assignToNewUser(id, newRecord, departmentName);
         return "redirect:/records";
     }
 

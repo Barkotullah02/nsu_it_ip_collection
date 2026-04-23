@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
             .csrf(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/css/**", "/js/**", "/fonts/**", "/login", "/error").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/fonts/**", "/login", "/error", "/api/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("SUPER_ADMIN")
                 .requestMatchers("/records/**").hasAnyRole("SUPER_ADMIN", "EDITOR", "VIEWER")
                 .requestMatchers("/users/**").hasRole("SUPER_ADMIN")

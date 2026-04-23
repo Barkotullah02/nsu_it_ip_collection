@@ -43,12 +43,12 @@
                 </div>
                 <div>
                     <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">IP ADDRESS *</label>
-                    <select name="ipAddressStr" required class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white focus:outline-none focus:border-cyber-neon">
-                        <option value="" class="text-gray-800">Select IP Address</option>
-                        <th:block th:if="${freeIpAddresses}">
-                            <option th:each="ip : ${freeIpAddresses}" th:value="${ip.ipAddress}" th:text="${ip.ipAddress} + ' (Room: ' + ${ip.room != null ? ip.room : 'N/A'} + ')'" class="text-gray-800">IP Address</option>
-                        </th:block>
-                    </select>
+                    <input type="text" id="ipAddressInput" name="ipAddressStr" list="ipAddressList" autocomplete="off" required
+                           placeholder="Start typing IP address..."
+                           class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white font-mono focus:outline-none focus:border-cyber-neon">
+                    <datalist id="ipAddressList">
+                        <option th:each="ip : ${freeIpAddresses}" th:value="${ip.ipAddress}" th:data-room="${ip.room}">IP: <span th:text="${ip.ipAddress}"></span> - Room: <span th:text="${ip.room != null ? ip.room : 'N/A'}"></span></option>
+                    </datalist>
                 </div>
                 <div>
                     <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">NAME OF USER</label>
@@ -68,7 +68,13 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">DEPARTMENT</label>
-                    <input type="text" th:field="*{department}" placeholder="Department of ECE" class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white focus:outline-none focus:border-cyber-neon">
+                    <input type="text" id="departmentInput" name="departmentName" list="departmentList" autocomplete="off"
+                           th:value="${record.department}"
+                           placeholder="Start typing department name..."
+                           class="w-full px-4 py-3 rounded-lg bg-cyber-dark border border-cyber-neon/30 text-white focus:outline-none focus:border-cyber-neon">
+                    <datalist id="departmentList">
+                        <option th:each="dept : ${departments}" th:value="${dept}">Department: <span th:text="${dept}"></span></option>
+                    </datalist>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-cyber-neon text-sm mb-2 font-semibold tracking-wide">MAC ADDRESS</label>

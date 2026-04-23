@@ -43,8 +43,8 @@
                     </div>
                     <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Status</span>
-                        <span th:if="${record.status == 'ACTIVE'}" class="px-3 py-1 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green rounded-full text-xs font-bold">● ACTIVE</span>
-                        <span th:if="${record.status == 'FREE'}" class="px-3 py-1 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink rounded-full text-xs font-bold">○ FREE</span>
+                        <span th:if="${record.isActive()}" class="px-3 py-1 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green rounded-full text-xs font-bold">● ACTIVE</span>
+                        <span th:unless="${record.isActive()}" class="px-3 py-1 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink rounded-full text-xs font-bold">○ FREE</span>
                     </div>
                     <div class="flex justify-between py-2 border-b border-cyber-neon/10">
                         <span class="text-gray-500">Name</span>
@@ -73,8 +73,13 @@
                 </div>
 
                 <div class="flex flex-wrap gap-3 mt-6">
-                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'FREE'}" th:href="@{/records/{id}/assign(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-bold transition">ASSIGN →</a>
-                    <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.status == 'ACTIVE'}" th:href="@{/records/{id}/free(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink hover:bg-cyber-pink/30 rounded-lg font-bold transition">FREE ↑</a>
+                    <form sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${!record.isActive()}" th:action="@{/records/{id}/assign(id=${record.id})}" method="get" class="flex-1">
+                        <button type="submit" class="w-full py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-bold transition">ASSIGN →</button>
+                    </form>
+                    <form sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.isActive()}" th:action="@{/records/{id}/free(id=${record.id})}" method="post" class="flex-1">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="w-full py-2 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink hover:bg-cyber-pink/30 rounded-lg font-bold transition">FREE ↑</button>
+                    </form>
                     <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/{id}/edit(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-purple/30 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-bold transition">EDIT ✎</a>
                     <a th:href="@{/records/{id}/history(id=${record.id})}" class="flex-1 text-center py-2 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-bold transition">HISTORY 📋</a>
                     <form sec:authorize="hasRole('SUPER_ADMIN')" th:action="@{/records/{id}/delete(id=${record.id})}" method="post" class="flex-1">

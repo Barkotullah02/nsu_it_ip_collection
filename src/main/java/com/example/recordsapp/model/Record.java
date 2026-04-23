@@ -1,8 +1,6 @@
 package com.example.recordsapp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +24,7 @@ public class Record {
     @Column(name = "ext_number", length = 20)
     private String extNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ip_address_id")
     private IpAddress ipAddress;
 
@@ -36,8 +34,9 @@ public class Record {
     @Column(length = 50)
     private String room;
 
-    @Column(length = 100, nullable = true)
-    private String department;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @Column(name = "assigned_at")
     private LocalDateTime assignedAt;
@@ -128,11 +127,18 @@ public class Record {
     }
 
     public String getDepartment() {
+        return department != null ? department.getName() : null;
+    }
+
+    public Department getDepartmentEntity() {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public void setDepartmentName(String departmentName) {
     }
 
     public LocalDateTime getAssignedAt() {

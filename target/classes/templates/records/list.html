@@ -150,8 +150,8 @@
                         <td class="px-4 py-3">
                             <div class="flex flex-wrap gap-2">
                                 <a th:href="@{/records/{id}(id=${record.id})}" class="text-cyber-neon hover:text-white text-sm font-semibold">VIEW</a>
-                                <span sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${!record.isActive()}" 
-                                   class="text-cyber-green text-sm font-semibold cursor-not-allowed opacity-50">ASSIGN</span>
+                                <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${!record.isActive()}" 
+                                   th:href="@{/records/{id}/assign(id=${record.id})}" class="text-cyber-green hover:text-white text-sm font-semibold">ASSIGN</a>
                                 <form sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:if="${record.isActive()}" th:action="@{/records/{id}/free(id=${record.id})}" method="post" class="inline">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                     <button type="submit" class="text-cyber-pink hover:text-white text-sm font-semibold">FREE</button>
