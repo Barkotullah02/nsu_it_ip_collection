@@ -3,10 +3,14 @@ com/example/recordsapp/repository/DepartmentRepository.class
 com/example/recordsapp/RecordsAppApplication.class
 com/example/recordsapp/model/Role.class
 com/example/recordsapp/repository/IpAddressRepository.class
+com/example/recordsapp/service/CsvImportService$CsvRecord.class
 com/example/recordsapp/model/RecordStatus.class
 com/example/recordsapp/security/SecurityConfig.class
 com/example/recordsapp/repository/UserRepository.class
 com/example/recordsapp/model/Record.class
+com/example/recordsapp/service/CsvImportService.class
+com/example/recordsapp/service/CsvImportService$ImportProgress.class
+com/example/recordsapp/controller/ImportController.class
 com/example/recordsapp/service/UserService.class
 com/example/recordsapp/controller/AuthController.class
 com/example/recordsapp/model/IpHistory.class
@@ -18,6 +22,7 @@ com/example/recordsapp/controller/IpAddressController.class
 com/example/recordsapp/security/CustomUserDetailsService.class
 com/example/recordsapp/service/PdfService.class
 com/example/recordsapp/model/AppUser.class
+com/example/recordsapp/service/CsvImportService$ImportResult.class
 com/example/recordsapp/service/RecordService.class
 com/example/recordsapp/controller/AdminController.class
 com/example/recordsapp/model/IpAddress.class

@@ -1,0 +1,4 @@
+name,designation,ext_number,ip_address,mac_address,room,department
+John Doe,Professor,101,192.168.1.10,00:1B:44:11:3A:B1,Room 301,Computer Science
+Jane Smith,Lecturer,102,192.168.1.11,00:1B:44:11:3A:B2,Room 302,Physics
+Ahmed Khan,Assistant Professor,103,192.168.1.12,00:1B:44:11:3A:B3,Room 303,Mathematics

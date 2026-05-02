@@ -30,10 +30,9 @@
         </header>
 
         <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-5 mb-6 max-w-2xl mx-auto">
-            <h3 class="text-lg font-orbitron font-bold text-cyber-green mb-3">CURRENT IP INFO</h3>
-            <div class="grid grid-cols-2 gap-4 p-4 bg-cyber-dark/50 rounded-lg">
-                <div><p class="text-gray-500 text-sm">IP Address</p><p class="font-mono text-cyber-neon text-xl font-bold" th:text="${record.ipAddress}">192.168.1.1</p></div>
-                <div><p class="text-gray-500 text-sm">Status</p><span class="px-3 py-1 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink rounded-full text-xs font-bold">○ FREE</span></div>
+            <h3 class="text-lg font-orbitron font-bold text-cyber-green mb-3">IP ADDRESS TO ASSIGN</h3>
+            <div class="p-4 bg-cyber-dark/50 rounded-lg">
+                <p class="font-mono text-cyber-neon text-2xl font-bold text-center" th:text="${record.ipAddress}">192.168.1.1</p>
             </div>
         </div>
 

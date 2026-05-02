@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras-spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import CSV - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .progress-bar-animated {
+            background: linear-gradient(90deg, #00f5ff 0%, #00ff88 25%, #00f5ff 50%, #00ff88 75%, #00f5ff 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">BULK IMPORT</h1>
+                <p class="text-cyber-blue mt-1">IMPORT IP RECORDS FROM CSV</p>
+            </div>
+            <nav class="flex flex-wrap gap-3">
+                <a th:href="@{/records}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">IP RECORDS</a>
+                <a th:href="@{/admin}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">ADMIN</a>
+                <form th:action="@{/logout}" method="post" class="inline">
+                    <button type="submit" class="px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold">LOGOUT</button>
+                </form>
+            </nav>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl p-6">
+                <h2 class="text-xl font-orbitron text-cyber-neon mb-4">DOWNLOAD TEMPLATE</h2>
+                <p class="text-gray-400 mb-4">Download the CSV template to see the required format.</p>
+                <a th:href="@{/import/template}" class="inline-flex items-center gap-2 px-6 py-3 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-semibold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    DOWNLOAD CSV TEMPLATE
+                </a>
+            </div>
+
+            <div class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl p-6">
+                <h2 class="text-xl font-orbitron text-cyber-neon mb-4">UPLOAD CSV</h2>
+                <p class="text-gray-400 mb-4">Upload a filled CSV file to import records.</p>
+                <form id="importForm" th:action="@{/import/process}" method="post" enctype="multipart/form-data" class="space-y-4">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <div class="border-2 border-dashed border-cyber-neon/50 rounded-lg p-8 text-center hover:border-cyber-neon transition-colors">
+                        <input type="file" name="file" id="fileInput" accept=".csv" required class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyber-purple file:text-cyber-neon file:cursor-pointer file:font-semibold">
+                    </div>
+                    <button type="submit" id="importBtn" class="w-full px-6 py-3 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">
+                        IMPORT RECORDS
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${isImporting}" id="progressSection" class="mt-8 bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl p-6">
+            <h2 class="text-xl font-orbitron text-cyber-neon mb-4">IMPORTING RECORDS...</h2>
+            
+            <div class="mb-4">
+                <div class="flex justify-between text-cyber-neon text-sm mb-2">
+                    <span id="progressText">Processing: 0 / 0</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="w-full bg-cyber-dark rounded-full h-4 overflow-hidden border border-cyber-neon/30">
+                    <div id="progressBar" class="progress-bar-animated h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <p class="text-gray-400 text-sm">Please wait while we process your records...</p>
+        </div>
+
+        <div th:if="${results}" class="mt-8 bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 bg-cyber-purple/50 border-b border-cyber-neon/30 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-orbitron text-cyber-neon">IMPORT RESULTS</h2>
+                    <p class="text-gray-400 text-sm mt-1">
+                        Successfully imported: <span class="text-cyber-green font-bold" th:text="${successCount}">0</span> | 
+                        Failed: <span class="text-cyber-red font-bold" th:text="${failedCount}">0</span>
+                    </p>
+                </div>
+                <a th:href="@{/import}" class="px-4 py-2 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-semibold text-sm">
+                    NEW IMPORT
+                </a>
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-cyber-purple/30 text-cyber-neon text-sm">
+                            <th class="px-4 py-2 text-left font-orbitron">ROW</th>
+                            <th class="px-4 py-2 text-left font-orbitron">IP ADDRESS</th>
+                            <th class="px-4 py-2 text-left font-orbitron">NAME</th>
+                            <th class="px-4 py-2 text-left font-orbitron">DEPARTMENT</th>
+                            <th class="px-4 py-2 text-left font-orbitron">STATUS</th>
+                            <th class="px-4 py-2 text-left font-orbitron">MESSAGE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="result : ${results}" class="border-b border-cyber-neon/10">
+                            <td class="px-4 py-2 text-white" th:text="${result.rowNumber}">1</td>
+                            <td class="px-4 py-2 text-cyber-blue" th:text="${result.ipAddress}">192.168.1.1</td>
+                            <td class="px-4 py-2 text-white" th:text="${result.name}">John Doe</td>
+                            <td class="px-4 py-2 text-gray-400" th:text="${result.department}">CS</td>
+                            <td class="px-4 py-2">
+                                <span th:if="${result.success}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">SUCCESS</span>
+                                <span th:unless="${result.success}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-red/20 text-cyber-red">FAILED</span>
+                            </td>
+                            <td class="px-4 py-2 text-gray-400" th:text="${result.message}">OK</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="mt-8 bg-cyber-red/10 border border-cyber-red/50 rounded-xl p-4">
+            <p class="text-cyber-red font-semibold" th:text="${error}">Error message</p>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var jobId = /*[[${jobId}]]*/ null;
+        var isImporting = /*[[${isImporting}]]*/ false;
+
+        if (isImporting && jobId) {
+            pollProgress(jobId);
+        }
+
+        function pollProgress(jobId) {
+            var interval = setInterval(function() {
+                fetch('/import/progress?jobId=' + jobId)
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.status === 'COMPLETED' || data.status === 'FAILED') {
+                            clearInterval(interval);
+                            window.location.href = '/import/results?jobId=' + jobId;
+                        } else if (data.status === 'NOT_FOUND') {
+                            clearInterval(interval);
+                            window.location.href = '/import';
+                        } else {
+                            document.getElementById('progressText').textContent = 'Processing: ' + data.processed + ' / ' + data.total;
+                            document.getElementById('progressPercent').textContent = data.percentage + '%';
+                            document.getElementById('progressBar').style.width = data.percentage + '%';
+                            
+                            if (data.error) {
+                                clearInterval(interval);
+                                alert('Error: ' + data.error);
+                            }
+                        }
+                    })
+                    .catch(function(error) {
+                        clearInterval(interval);
+                    });
+            }, 500);
+        }
+    </script>
+</body>
+</html>

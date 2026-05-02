@@ -72,6 +72,7 @@
                 <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/admin}" class="px-5 py-2.5 bg-cyber-purple/30 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition-all hover:scale-105">⚡ Users</a>
                 <a sec:authorize="hasRole('SUPER_ADMIN')" th:href="@{/ip-addresses}" class="px-5 py-2.5 bg-cyber-purple/30 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold transition-all hover:scale-105">📡 IPs</a>
                 <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/records/new}" class="px-5 py-2.5 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold transition-all hover:scale-105">+ ADD IP</a>
+                <a sec:authorize="hasAnyRole('SUPER_ADMIN', 'EDITOR')" th:href="@{/import}" class="px-5 py-2.5 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-semibold transition-all hover:scale-105">📥 IMPORT</a>
                 <a th:href="@{/records/export/pdf}" class="px-5 py-2.5 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink hover:bg-cyber-pink/30 rounded-lg font-semibold transition-all hover:scale-105">📄 PDF</a>
                 <form th:action="@{/logout}" method="post" class="inline">
                     <button type="submit" class="px-5 py-2.5 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold transition-all hover:scale-105">🚪 LOGOUT</button>
