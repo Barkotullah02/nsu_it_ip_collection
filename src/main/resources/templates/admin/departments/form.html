@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${formTitle}">Department Form - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto max-w-md px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-orbitron font-bold text-cyber-neon" th:text="${formTitle}">Department Form</h1>
+            <a th:href="@{/admin/departments}" class="text-cyber-blue hover:text-cyber-neon text-sm font-semibold">← Back to Departments</a>
+        </header>
+
+        <form th:action="@{${formAction}}" th:object="${department}" method="post" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div class="mb-4">
+                <label for="name" class="block text-cyber-neon font-semibold mb-2">Department Name *</label>
+                <input id="name" type="text" th:field="*{name}" maxlength="150" required 
+                       class="w-full bg-cyber-dark border border-cyber-neon/50 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyber-neon">
+                <p th:if="${#fields.hasErrors('name')}" class="text-cyber-red text-sm mt-1" th:errors="*{name}">Error</p>
+            </div>
+
+            <div class="mb-6">
+                <label for="description" class="block text-cyber-neon font-semibold mb-2">Description</label>
+                <textarea id="description" th:field="*{description}" maxlength="500" rows="4"
+                          class="w-full bg-cyber-dark border border-cyber-neon/50 rounded px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-cyber-neon"></textarea>
+                <p th:if="${#fields.hasErrors('description')}" class="text-cyber-red text-sm mt-1" th:errors="*{description}">Error</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="submit" class="flex-1 px-4 py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">SAVE</button>
+                <a th:href="@{/admin/departments}" class="flex-1 px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold text-center">CANCEL</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

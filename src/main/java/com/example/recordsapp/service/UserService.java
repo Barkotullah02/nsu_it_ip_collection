@@ -59,4 +59,8 @@ public class UserService {
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
+
+    public long count() {
+        return userRepository.count();
+    }
 }

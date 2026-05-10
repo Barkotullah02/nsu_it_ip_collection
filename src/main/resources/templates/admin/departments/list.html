@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">DEPARTMENTS</h1>
+                <p class="text-cyber-blue mt-1">NSU IT DEPARTMENT</p>
+            </div>
+            <nav class="flex flex-wrap gap-3">
+                <a th:href="@{/admin}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">DASHBOARD</a>
+                <a th:href="@{/admin/ip-addresses}" class="px-4 py-2 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 rounded-lg font-semibold">IP ADDRESSES</a>
+                <a th:href="@{/admin/departments/new}" class="px-4 py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">+ ADD DEPARTMENT</a>
+                <form th:action="@{/logout}" method="post" class="inline">
+                    <button type="submit" class="px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold">LOGOUT</button>
+                </form>
+            </nav>
+        </header>
+
+        <div th:if="${#lists.isEmpty(departments)}" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-12 text-center">
+            <h3 class="text-2xl text-gray-400 font-orbitron">NO DEPARTMENTS FOUND</h3>
+            <p class="text-gray-500 mt-2">Create your first department to get started.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(departments)}" class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-cyber-purple/50">
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">NAME</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">DESCRIPTION</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">CREATED AT</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dept : ${departments}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20">
+                        <td class="px-4 py-3 text-cyber-neon font-bold" th:text="${dept.name}">Dept Name</td>
+                        <td class="px-4 py-3 text-white" th:text="${dept.description ?: 'N/A'}">Description</td>
+                        <td class="px-4 py-3 text-cyber-blue" th:text="${#temporals.format(dept.createdAt, 'yyyy-MM-dd HH:mm')}">Created At</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2">
+                                <a th:href="@{/admin/departments/{id}/edit(id=${dept.id})}" class="text-cyber-neon hover:text-white text-sm font-semibold">EDIT</a>
+                                <form th:action="@{/admin/departments/{id}/delete(id=${dept.id})}" method="post" class="inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="text-cyber-red hover:text-white text-sm font-semibold" onclick="return confirm('Are you sure?')">DELETE</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

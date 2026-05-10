@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Addresses - NSU IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { cyber: { dark: '#0a0a1a', purple: '#1a0a2e', neon: '#00f5ff', pink: '#ff00ff', blue: '#00a8ff', green: '#00ff88', red: '#ff0066' } },
+                    fontFamily: { orbitron: ['Orbitron', 'sans-serif'], rajdhani: ['Rajdhani', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%); }
+    </style>
+</head>
+<body class="bg-cyber-dark min-h-screen font-rajdhani">
+    <div class="container mx-auto px-4 py-8">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">IP ADDRESSES</h1>
+                <p class="text-cyber-blue mt-1">NSU IT DEPARTMENT</p>
+            </div>
+            <nav class="flex flex-wrap gap-3">
+                <a th:href="@{/admin}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">DASHBOARD</a>
+                <a th:href="@{/admin/departments}" class="px-4 py-2 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/20 rounded-lg font-semibold">DEPARTMENTS</a>
+                <a th:href="@{/admin/ip-addresses/new}" class="px-4 py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">+ ADD IP</a>
+                <form th:action="@{/logout}" method="post" class="inline">
+                    <button type="submit" class="px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold">LOGOUT</button>
+                </form>
+            </nav>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6">
+                <p class="text-cyber-blue font-orbitron text-sm">TOTAL IPs</p>
+                <p class="text-3xl font-orbitron font-bold text-cyber-neon mt-2" th:text="${totalCount}">0</p>
+            </div>
+            <div class="bg-cyber-purple/20 border border-cyber-green/30 rounded-xl p-6">
+                <p class="text-cyber-green font-orbitron text-sm">ASSIGNED</p>
+                <p class="text-3xl font-orbitron font-bold text-cyber-green mt-2" th:text="${assignedCount}">0</p>
+            </div>
+            <div class="bg-cyber-purple/20 border border-cyber-pink/30 rounded-xl p-6">
+                <p class="text-cyber-pink font-orbitron text-sm">FREE</p>
+                <p class="text-3xl font-orbitron font-bold text-cyber-pink mt-2" th:text="${freeCount}">0</p>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(ipAddresses)}" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-12 text-center">
+            <h3 class="text-2xl text-gray-400 font-orbitron">NO IP ADDRESSES FOUND</h3>
+            <p class="text-gray-500 mt-2">Add your first IP address to get started.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(ipAddresses)}" class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-cyber-purple/50">
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">IP ADDRESS</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">MAC ADDRESS</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ROOM</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">STATUS</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">CREATED AT</th>
+                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ip : ${ipAddresses}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20">
+                        <td class="px-4 py-3 text-cyber-neon font-bold" th:text="${ip.ipAddress}">192.168.1.1</td>
+                        <td class="px-4 py-3 text-white" th:text="${ip.macAddress ?: 'N/A'}">MAC</td>
+                        <td class="px-4 py-3 text-cyber-blue" th:text="${ip.room ?: 'N/A'}">Room</td>
+                        <td class="px-4 py-3">
+                            <span th:if="${ip.isAssigned}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">ASSIGNED</span>
+                            <span th:if="${!ip.isAssigned}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-yellow/20 text-cyber-yellow">FREE</span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400" th:text="${#temporals.format(ip.createdAt, 'yyyy-MM-dd HH:mm')}">Created At</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2">
+                                <a th:href="@{/admin/ip-addresses/{id}/edit(id=${ip.id})}" class="text-cyber-neon hover:text-white text-sm font-semibold">EDIT</a>
+                                <form th:action="@{/admin/ip-addresses/{id}/delete(id=${ip.id})}" method="post" class="inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button type="submit" class="text-cyber-red hover:text-white text-sm font-semibold" onclick="return confirm('Are you sure?')">DELETE</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

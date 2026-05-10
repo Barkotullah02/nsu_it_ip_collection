@@ -12,4 +12,5 @@ public interface IpAddressRepository extends JpaRepository<IpAddress, Long> {
     Optional<IpAddress> findByIpAddress(String ipAddress);
     List<IpAddress> findByIsAssigned(Boolean isAssigned);
     boolean existsByIpAddress(String ipAddress);
+    long countByIsAssigned(Boolean isAssigned);
 }

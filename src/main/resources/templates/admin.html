@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras-spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management - NSU IT</title>
+    <title>Admin Dashboard - NSU IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,65 +26,97 @@
     <div class="container mx-auto px-4 py-8">
         <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
             <div>
-                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">USER MANAGEMENT</h1>
+                <h1 class="text-3xl font-orbitron font-bold text-cyber-neon">ADMIN DASHBOARD</h1>
                 <p class="text-cyber-blue mt-1">NSU IT DEPARTMENT</p>
             </div>
             <nav class="flex flex-wrap gap-3">
                 <a th:href="@{/records}" class="px-4 py-2 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/20 rounded-lg font-semibold">IP RECORDS</a>
-                <a th:href="@{/users/new}" class="px-4 py-2 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold">+ ADD USER</a>
                 <form th:action="@{/logout}" method="post" class="inline">
                     <button type="submit" class="px-4 py-2 bg-cyber-red/20 border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/30 rounded-lg font-semibold">LOGOUT</button>
                 </form>
             </nav>
         </header>
 
-        <div th:if="${#lists.isEmpty(users)}" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-12 text-center">
-            <h3 class="text-2xl text-gray-400 font-orbitron">NO USERS FOUND</h3>
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <a th:href="@{/users}" class="bg-cyber-purple/20 border border-cyber-neon/30 rounded-xl p-6 hover:bg-cyber-purple/40 transition">
+                <p class="text-cyber-neon font-orbitron text-sm">TOTAL USERS</p>
+                <p class="text-4xl font-orbitron font-bold text-cyber-neon mt-3" th:text="${userCount}">0</p>
+                <p class="text-gray-400 text-xs mt-2">Click to manage users</p>
+            </a>
+            <a th:href="@{/admin/departments}" class="bg-cyber-purple/20 border border-cyber-blue/30 rounded-xl p-6 hover:bg-cyber-purple/40 transition">
+                <p class="text-cyber-blue font-orbitron text-sm">DEPARTMENTS</p>
+                <p class="text-4xl font-orbitron font-bold text-cyber-blue mt-3" th:text="${departmentCount}">0</p>
+                <p class="text-gray-400 text-xs mt-2">Click to manage departments</p>
+            </a>
+            <a th:href="@{/admin/ip-addresses}" class="bg-cyber-purple/20 border border-cyber-green/30 rounded-xl p-6 hover:bg-cyber-purple/40 transition">
+                <p class="text-cyber-green font-orbitron text-sm">IP ADDRESSES</p>
+                <p class="text-4xl font-orbitron font-bold text-cyber-green mt-3" th:text="${totalIpCount}">0</p>
+                <p class="text-gray-400 text-xs mt-2">Click to manage IP addresses</p>
+            </a>
         </div>
 
-        <div th:unless="${#lists.isEmpty(users)}" class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl overflow-hidden">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-cyber-purple/50">
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">USERNAME</th>
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">FULL NAME</th>
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">DEPARTMENT</th>
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ROLE</th>
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">STATUS</th>
-                        <th class="px-4 py-3 text-left text-cyber-neon font-orbitron text-sm">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="user : ${users}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20">
-                        <td class="px-4 py-3 text-cyber-neon font-bold" th:text="${user.username}">username</td>
-                        <td class="px-4 py-3 text-white" th:text="${user.fullName}">Full Name</td>
-                        <td class="px-4 py-3 text-cyber-blue" th:text="${user.department}">IT</td>
-                        <td class="px-4 py-3">
-                            <th:block th:each="role : ${user.roles}">
-                                <span th:if="${role.name() == 'SUPER_ADMIN'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-pink/20 text-cyber-pink">SUPER_ADMIN</span>
-                                <span th:if="${role.name() == 'EDITOR'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">EDITOR</span>
-                                <span th:if="${role.name() == 'VIEWER'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-blue/20 text-cyber-blue">VIEWER</span>
-                            </th:block>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span th:if="${user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">ACTIVE</span>
-                            <span th:if="${!user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-red/20 text-cyber-red">INACTIVE</span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex gap-2">
-                                <a th:href="@{/users/{id}/edit(id=${user.id})}" class="text-cyber-neon hover:text-white text-sm font-semibold">EDIT</a>
-                                <a th:href="@{/users/{id}/toggle(id=${user.id})}" class="text-gray-400 hover:text-white text-sm font-semibold">
-                                    <span th:text="${user.isActive ? 'DISABLE' : 'ENABLE'}">Toggle</span>
-                                </a>
-                                <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" class="inline">
-                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                    <button type="submit" class="text-cyber-red hover:text-white text-sm font-semibold">DELETE</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- IP Address Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-cyber-purple/20 border border-cyber-green/30 rounded-xl p-6">
+                <p class="text-cyber-green font-orbitron text-sm">ASSIGNED IPs</p>
+                <p class="text-3xl font-orbitron font-bold text-cyber-green mt-3" th:text="${assignedIpCount}">0</p>
+            </div>
+            <div class="bg-cyber-purple/20 border border-cyber-pink/30 rounded-xl p-6">
+                <p class="text-cyber-pink font-orbitron text-sm">FREE IPs</p>
+                <p class="text-3xl font-orbitron font-bold text-cyber-pink mt-3" th:text="${freeIpCount}">0</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl p-6 mb-8">
+            <h3 class="text-cyber-neon font-orbitron text-lg mb-4">QUICK ACTIONS</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <a th:href="@{/users/new}" class="px-4 py-3 bg-cyber-green/20 border border-cyber-green/50 text-cyber-green hover:bg-cyber-green/30 rounded-lg font-semibold text-center">+ ADD USER</a>
+                <a th:href="@{/admin/departments/new}" class="px-4 py-3 bg-cyber-blue/20 border border-cyber-blue/50 text-cyber-blue hover:bg-cyber-blue/30 rounded-lg font-semibold text-center">+ ADD DEPARTMENT</a>
+                <a th:href="@{/admin/ip-addresses/new}" class="px-4 py-3 bg-cyber-pink/20 border border-cyber-pink/50 text-cyber-pink hover:bg-cyber-pink/30 rounded-lg font-semibold text-center">+ ADD IP ADDRESS</a>
+                <a th:href="@{/admin/ip-addresses}" class="px-4 py-3 bg-cyber-neon/20 border border-cyber-neon/50 text-cyber-neon hover:bg-cyber-neon/30 rounded-lg font-semibold text-center">VIEW ALL IPs</a>
+            </div>
+        </div>
+
+        <!-- Users Table Preview -->
+        <div class="bg-cyber-purple/10 border border-cyber-neon/30 rounded-xl p-6">
+            <h3 class="text-cyber-neon font-orbitron text-lg mb-4">RECENT USERS</h3>
+            <div th:if="${#lists.isEmpty(users)}" class="text-gray-400 py-6">
+                No users found. <a th:href="@{/users/new}" class="text-cyber-neon hover:underline">Add one now</a>.
+            </div>
+            <div th:unless="${#lists.isEmpty(users)}" class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-cyber-neon/20">
+                            <th class="px-3 py-2 text-left text-cyber-neon font-orbitron">USERNAME</th>
+                            <th class="px-3 py-2 text-left text-cyber-neon font-orbitron">FULL NAME</th>
+                            <th class="px-3 py-2 text-left text-cyber-neon font-orbitron">ROLE</th>
+                            <th class="px-3 py-2 text-left text-cyber-neon font-orbitron">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}" class="border-b border-cyber-neon/10 hover:bg-cyber-purple/20">
+                            <td class="px-3 py-2 text-cyber-neon" th:text="${user.username}">username</td>
+                            <td class="px-3 py-2 text-white" th:text="${user.fullName}">Full Name</td>
+                            <td class="px-3 py-2">
+                                <th:block th:each="role : ${user.roles}">
+                                    <span th:if="${role.name() == 'SUPER_ADMIN'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-pink/20 text-cyber-pink">SUPER_ADMIN</span>
+                                    <span th:if="${role.name() == 'EDITOR'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">EDITOR</span>
+                                    <span th:if="${role.name() == 'VIEWER'}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-blue/20 text-cyber-blue">VIEWER</span>
+                                </th:block>
+                            </td>
+                            <td class="px-3 py-2">
+                                <span th:if="${user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-green/20 text-cyber-green">ACTIVE</span>
+                                <span th:if="${!user.isActive}" class="px-2 py-1 rounded text-xs font-bold bg-cyber-red/20 text-cyber-red">INACTIVE</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4">
+                <a th:href="@{/users}" class="text-cyber-neon hover:text-white text-sm font-semibold">View all users →</a>
+            </div>
         </div>
     </div>
 </body>
