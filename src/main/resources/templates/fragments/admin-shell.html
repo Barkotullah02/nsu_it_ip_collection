@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="adminHeader(activeSection)" class="grid gap-6 xl:grid-cols-[18rem_1fr]">
+    <aside class="rounded-3xl border border-slate-200 bg-white shadow-sm xl:sticky xl:top-6 xl:h-[calc(100vh-3rem)]">
+        <div class="flex h-full flex-col p-6">
+            <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">NSU IT Records</p>
+                <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Administration Console</h1>
+                <p class="mt-2 text-sm text-slate-600">Manage users, departments, and network assets from one place.</p>
+            </div>
+
+            <nav class="mt-8 grid gap-2">
+                <a th:href="@{/admin}" class="rounded-2xl border px-4 py-3 text-sm font-semibold transition" th:classappend="${activeSection == 'dashboard'} ? ' border-slate-900 bg-slate-900 text-white shadow-sm' : ' border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'">Dashboard</a>
+                <a th:href="@{/admin/users}" class="rounded-2xl border px-4 py-3 text-sm font-semibold transition" th:classappend="${activeSection == 'users'} ? ' border-slate-900 bg-slate-900 text-white shadow-sm' : ' border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'">Users</a>
+                <a th:href="@{/admin/departments}" class="rounded-2xl border px-4 py-3 text-sm font-semibold transition" th:classappend="${activeSection == 'departments'} ? ' border-slate-900 bg-slate-900 text-white shadow-sm' : ' border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'">Departments</a>
+                <a th:href="@{/admin/ip-addresses}" class="rounded-2xl border px-4 py-3 text-sm font-semibold transition" th:classappend="${activeSection == 'ip-addresses'} ? ' border-slate-900 bg-slate-900 text-white shadow-sm' : ' border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'">IP Addresses</a>
+            </nav>
+
+            <div class="mt-auto pt-6">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-100 hover:text-slate-900">Logout</button>
+                </form>
+            </div>
+        </div>
+    </aside>
+</div>
+</body>
+</html>

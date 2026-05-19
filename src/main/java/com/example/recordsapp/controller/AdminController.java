@@ -37,4 +37,11 @@ public class AdminController {
         model.addAttribute("page", "dashboard");
         return "admin";
     }
+
+    @GetMapping("/users")
+    public String adminUsersList(Model model) {
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("page", "users");
+        return "admin/users/list";
+    }
 }
